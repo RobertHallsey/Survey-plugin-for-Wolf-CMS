@@ -21,7 +21,7 @@ if (!defined('IN_CMS')) { exit(); }
 
 <code>
 &lt;?php
-  if (Plugin::isEnabled('survey')) survey('my_survey');
+	if (Plugin::isEnabled('survey')) survey('my_survey');
 ?&gt;
 </code>
 

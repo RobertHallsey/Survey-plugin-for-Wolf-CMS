@@ -7,16 +7,16 @@
 <?php endif; ?>
 <?php if ($execute): ?>
 <script type="text/javascript">
-  function formDisable() {
-    var form = document.getElementById("form");
-    var elements = form.elements;
-    for (var i = 0, len = elements.length; i < len; i++) {
-      elements[i].disabled = true;
-    }
-  }
-  function formReset() {
-    this.form.reset()
-  }
-  <?php echo $execute ?>
+	function formDisable() {
+		var form = document.getElementById("form");
+		var elements = form.elements;
+		for (var i = 0, len = elements.length; i < len; i++) {
+			elements[i].disabled = true;
+		}
+	}
+	function formReset() {
+		this.form.reset()
+	}
+	<?php echo $execute ?>
 </script>
 <?php endif; ?>

@@ -6,16 +6,16 @@
 <h2>Files in the Package</h2>
 <p>You should have received the system in a zip file containing the following files:</p>
 <pre>
-  \readme.md
-  \documentation.htm
-  \index.php
-  \sample
-  \Survey.php
-  \SurveyController.php
-  \views\index.php
-  \views\sidebar.php
-  \i18n\en-message.php
-  \i18n\sp-message.php
+	\readme.md
+	\documentation.htm
+	\index.php
+	\sample
+	\Survey.php
+	\SurveyController.php
+	\views\index.php
+	\views\sidebar.php
+	\i18n\en-message.php
+	\i18n\sp-message.php
 </pre>
 <p>Please move the sample file to the Wolf public directory. You may delete the readme.md file, if you wish.</p>
 <p>Note that there may be other language files in the i18n directory. You only need the language files for the languages you intend to support. Deleting the ones you don't need will not affect the plugin's operation.

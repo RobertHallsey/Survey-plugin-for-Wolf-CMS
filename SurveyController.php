@@ -18,18 +18,18 @@ if (!defined('IN_CMS')) exit();
  
 class SurveyController extends PluginController {
 
-  function __construct() {
-      $this->setLayout('backend');
-      $this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
-  }
+	function __construct() {
+			$this->setLayout('backend');
+			$this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
+	}
 
-  function index() {
-    $this->display('survey/views/index', array());
-  }
+	function index() {
+		$this->display('survey/views/index', array());
+	}
  
-  function documentation() {
-    $this->display('survey/views/documentation', array());
-  }
+	function documentation() {
+		$this->display('survey/views/documentation', array());
+	}
 
  
  }
