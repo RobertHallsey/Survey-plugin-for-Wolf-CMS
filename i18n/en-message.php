@@ -6,7 +6,7 @@ return array(
 	'Documentation' => 'Documentation',
 	'No survey name specified' => 'No survey name specified',
 	'Survey is finished' => 'Survey is finished',
-	'Survey file not there' => 'Survey file not there',
+	'Survey file not found' => 'Survey file not found',
 	'Cannot parse survey file' => 'Cannot parse survey file',
 	'Survey file missing meta section' => 'Survey file missing meta section',
 	'Section \'%name%\' has missing Type property' => 'Section \'%name%\' has missing Type property',
@@ -17,7 +17,7 @@ return array(
 	'Clear form and start over' => 'Clear form and start over',
 	'Done!' => 'Done!',
 	'Validation Timestamp: ' => 'Validation Timestamp: ',
-	'Survey response file not there' => 'Survey response file not there',
+	'Survey response file not found' => 'Survey response file not found',
 	'File has lines of different value counts' => 'File has lines of different value counts',
 	
 );

@@ -59,7 +59,7 @@ class Survey {
 		$this->survey_name = $survey_name;
 		$this->survey_file = SURVEY_PATH . $this->survey_name;
 		if (!file_exists($this->survey_file)) {
-			return __('Survey file not there');
+			return __('Survey file not found');
 		}
 		//check the survey file for errors
 		if (($this->survey_data = parse_ini_file($this->survey_file, TRUE)) == FALSE) {
@@ -109,7 +109,7 @@ class Survey {
 		// load CSV file into $responses[]
 		$response_file = $this->survey_file . '-resp.txt';
 		if (!file_exists($response_file)) {
-			return __('Survey response file not there');
+			return __('Survey response file not found');
 		}
 		$CSV_count = 0;
 		$responses = array();
@@ -124,8 +124,8 @@ class Survey {
 				return __('File has lines of different value counts');
 			}
 		}
-		// load $responses[] into $survey array
 		$this->response_count = count($responses);
+		// load $responses[] into $survey array
 		foreach ($responses as $response) {
 			$offset = 2;
 			foreach ($this->survey_data as $section_name => $section_data) {
@@ -145,72 +145,69 @@ class Survey {
 		// summarize responses in $this->survey_data array
 		foreach ($this->survey_data as $section_name => $section_data) {
 			if ($section_name != 'meta') {
-				switch ($this->survey_data[$section_name]['type']) {
-
-				// type 1
-				case 1:
-					$answer_count = count($this->survey_data[$section_name]['answers']);
-					foreach ($section_data['questions'] as $kq => $q) {
-						$temp_array = array_count_values($this->survey_data[$section_name]['responses'][$kq]);
-						ksort($temp_array, SORT_NUMERIC);
-						$max = max($temp_array);
-						$this->survey_data[$section_name]['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
-						foreach ($temp_array as $kt => $temp_value) {
-							$kt--;
-							$this->survey_data[$section_name]['summary'][$kq][$kt] = 
-								(($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value);
-							$this->survey_data[$section_name]['summary'][$kq][$kt + $answer_count] = 
-								str_replace(' ', '&nbsp;', 
-									(($temp_value == $max) 
-									? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
-									: sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))));
-						}
-					}
-					break;
-
-				// type 2
-				case 2:
-					$answer_count = count($section_data['answers']);
-					$temp_array = array_count_values($section_data['responses'][0]);
-					ksort($temp_array, SORT_NUMERIC);
-					$max = max($temp_array);
-					$this->survey_data[$section_name]['summary'] = array_fill(0, $answer_count, array (0, 0));
-					foreach ($temp_array as $kt => $temp_value) {
-						$kt--;
-						$this->survey_data[$section_name]['summary'][$kt] = array (
-							0 => (($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value),
-							1 => str_replace(' ', '&nbsp;',
-									 (($temp_value == $max) 
-									 ? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
-									 : sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))))
-						);
-					}
-					break;
-
-				// type 3
-				case 3:
-					$answer_count = count($section_data['answers']);
-					$temp_array = array_fill(0, count($section_data['responses']), 0);
-					foreach ($section_data['responses'] as $kr => $response) {
-						foreach ($response as $k => $r) {
-							$temp_array[$kr] += $r;
-						}
-					}
-					ksort($temp_array, SORT_NUMERIC);
-					$max = max($temp_array);
-					$this->survey_data[$section_name]['summary'] = array_fill(0, $answer_count, array (0, 0));
-					foreach ($temp_array as $kt => $temp_value) {
-						$this->survey_data[$section_name]['summary'][$kt][0] =
-							(($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value);
-						$this->survey_data[$section_name]['summary'][$kt][1] =
-							str_replace(' ', '&nbsp;', 
-								(($temp_value == $max)
-								? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
-								: sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))));
-					}
-					break;
-				}
+				$summarize_function = 'summarize_type' . $this->survey_data[$section_name]['type'];
+				$this->$summarize_function($section_name, $section_data);
 			}
+		}
+	}
+	
+	function summarize_type1($section_name, $section_data) {
+		$answer_count = count($this->survey_data[$section_name]['answers']);
+		foreach ($section_data['questions'] as $kq => $q) {
+			$temp_array = array_count_values($this->survey_data[$section_name]['responses'][$kq]);
+			ksort($temp_array, SORT_NUMERIC);
+			$max = max($temp_array);
+			$this->survey_data[$section_name]['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
+			foreach ($temp_array as $kt => $temp_value) {
+				$kt--;
+				$this->survey_data[$section_name]['summary'][$kq][$kt] = 
+					(($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value);
+				$this->survey_data[$section_name]['summary'][$kq][$kt + $answer_count] = 
+					str_replace(' ', '&nbsp;', 
+						(($temp_value == $max) 
+						? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
+						: sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))));
+			}
+		}
+	}
+
+	function summarize_type2($section_name, $section_data) {
+		$answer_count = count($section_data['answers']);
+		$temp_array = array_count_values($section_data['responses'][0]);
+		ksort($temp_array, SORT_NUMERIC);
+		$max = max($temp_array);
+		$this->survey_data[$section_name]['summary'] = array_fill(0, $answer_count, array (0, 0));
+		foreach ($temp_array as $kt => $temp_value) {
+			$kt--;
+			$this->survey_data[$section_name]['summary'][$kt] = array (
+				0 => (($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value),
+				1 => str_replace(' ', '&nbsp;',
+						 (($temp_value == $max) 
+						 ? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
+						 : sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))))
+			);
+		}
+	}
+
+	function summarize_type3($section_name, $section_data) {
+		$answer_count = count($section_data['answers']);
+		$temp_array = array_fill(0, count($section_data['responses']), 0);
+		foreach ($section_data['responses'] as $kr => $response) {
+			foreach ($response as $k => $r) {
+				$temp_array[$kr] += $r;
+			}
+		}
+		ksort($temp_array, SORT_NUMERIC);
+		$max = max($temp_array);
+		$this->survey_data[$section_name]['summary'] = array_fill(0, $answer_count, array (0, 0));
+		foreach ($temp_array as $kt => $temp_value) {
+			$this->survey_data[$section_name]['summary'][$kt][0] =
+				(($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value);
+			$this->survey_data[$section_name]['summary'][$kt][1] =
+				str_replace(' ', '&nbsp;', 
+					(($temp_value == $max)
+					? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
+					: sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))));
 		}
 	}
 
