@@ -146,47 +146,40 @@ class Survey {
 		foreach ($this->survey_data as $section_name => $section_data) {
 			if ($section_name != 'meta') {
 				$summarize_function = 'summarize_type' . $this->survey_data[$section_name]['type'];
-				$this->$summarize_function($section_name, $section_data);
+				$this->survey_data[$section_name]['summary'] =
+					$this->$summarize_function($section_name, $section_data);
 			}
 		}
 	}
 	
 	function summarize_type1($section_name, $section_data) {
-		$answer_count = count($this->survey_data[$section_name]['answers']);
+		$answer_count = count($section_data['answers']);
 		foreach ($section_data['questions'] as $kq => $q) {
-			$temp_array = array_count_values($this->survey_data[$section_name]['responses'][$kq]);
-			ksort($temp_array, SORT_NUMERIC);
+			$temp_array = array_count_values($section_data['responses'][$kq]);
 			$max = max($temp_array);
-			$this->survey_data[$section_name]['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
+			$section_data['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
 			foreach ($temp_array as $kt => $temp_value) {
 				$kt--;
-				$this->survey_data[$section_name]['summary'][$kq][$kt] = 
-					(($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value);
-				$this->survey_data[$section_name]['summary'][$kq][$kt + $answer_count] = 
-					str_replace(' ', '&nbsp;', 
-						(($temp_value == $max) 
-						? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
-						: sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))));
+				$section_data['summary'][$kq][$kt] = $temp_value;
+				$section_data['summary'][$kq][$kt + $answer_count] = 
+					round($temp_value / $this->response_count * 100, 0);
 			}
 		}
+		return $section_data['summary'];
 	}
 
 	function summarize_type2($section_name, $section_data) {
 		$answer_count = count($section_data['answers']);
 		$temp_array = array_count_values($section_data['responses'][0]);
-		ksort($temp_array, SORT_NUMERIC);
-		$max = max($temp_array);
-		$this->survey_data[$section_name]['summary'] = array_fill(0, $answer_count, array (0, 0));
+		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
 		foreach ($temp_array as $kt => $temp_value) {
 			$kt--;
-			$this->survey_data[$section_name]['summary'][$kt] = array (
-				0 => (($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value),
-				1 => str_replace(' ', '&nbsp;',
-						 (($temp_value == $max) 
-						 ? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
-						 : sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))))
+			$section_data['summary'][$kt] = array (
+				0 => $temp_value,
+				1 => round($temp_value / $this->response_count * 100, 0)
 			);
 		}
+		return $section_data['summary'];
 	}
 
 	function summarize_type3($section_name, $section_data) {
@@ -197,25 +190,21 @@ class Survey {
 				$temp_array[$kr] += $r;
 			}
 		}
-		ksort($temp_array, SORT_NUMERIC);
 		$max = max($temp_array);
-		$this->survey_data[$section_name]['summary'] = array_fill(0, $answer_count, array (0, 0));
+		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
 		foreach ($temp_array as $kt => $temp_value) {
-			$this->survey_data[$section_name]['summary'][$kt][0] =
-				(($temp_value == $max) ? '<b>' . $temp_value . '</b>' : $temp_value);
-			$this->survey_data[$section_name]['summary'][$kt][1] =
-				str_replace(' ', '&nbsp;', 
-					(($temp_value == $max)
-					? '<b>' . sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1)) . '</b>'
-					: sprintf("%3.0f", round($temp_value / $this->response_count * 100, 1))));
+			$section_data['summary'][$kt][0] = $temp_value;
+			$section_data['summary'][$kt][1] =
+				round($temp_value / $this->response_count * 100, 0);
 		}
+		return $section_data['summary'];
 	}
 
 	function render_form() {
 		ob_start();
 		echo $this->build_header(),
-				 $this->build_body(),
-				 $this->build_footer();
+			$this->build_body(),
+			$this->build_footer();
 		ob_end_flush();
 	}
 
@@ -232,7 +221,7 @@ class Survey {
 					: __('Question #%question_number%\'s last option is either/or', array('%question_number' => -$this->error)));
 			}
 		}
-		$view_file = SURVEY_VIEWS . 'formheader';
+		$view_file = SURVEY_VIEWS . 'surveyheader';
 		$arg_array = array(
 			'survey_name' => $this->survey_data['meta']['name'],
 			'user_msg' => $user_msg,
@@ -265,7 +254,7 @@ class Survey {
 
 	function build_footer() {
 		$execute = (($this->js_function == '') ? '' : $this->js_function . '();');
-		$view_file = SURVEY_VIEWS . 'formfooter';
+		$view_file = SURVEY_VIEWS . 'surveyfooter';
 		$arg_array = array(
 			'execute' => $execute,
 			'disabled' => ($this->js_function == 'formDisable'),
@@ -275,128 +264,26 @@ class Survey {
 	}
 
 	function render_chart() {
-		$html = <<<HTML
-<style>
-	h1, h2, h3 {
-		font-family: Arial, Helvetica, sans-serif;
-	}
-	h3 {
-		margin-bottom: 0;
-		margin-top: 40px;
-	}
-	table {
-		margin-bottom: 20px;
-		font-size: 85%;
-		border-collapse:collapse;
-		border: 2px solid;
-	}
-	th {
-		font-weight: normal;
-		vertical-align: bottom;
-		border: 1px solid;
-		text-align: center;
-		padding: 2px 5px 2px 5px;
-	}
-	td {
-		border: 1px solid;
-		text-align: right;
-		padding: 2px 5px 2px 5px;
-	}
-	th:first-child,
-	td:first-child {
-		text-align: left;
-	}
-	td.total-line {
-		text-align: right;
-	}
-	thead,
-	tr:nth-child(2n+2) {
-		background-color: #f0f0f0;
-	}
-	th.not-1st-child {
-		text-align: center;
-	}
-</style>
-
-<h1>Survey Summary</h1>
-
-HTML;
-
-		$html .= '<h2>' . $this->survey_data['meta']['name'] . '</h2>' . "\n" .
-						 '<h3>Total Responses: ' . $this->response_count . '</h3>';
-		$qnum = 1;
+		$view_file = SURVEY_VIEWS . 'summaryheader';
+		$arg_array = array(
+			'survey_name' => $this->survey_data['meta']['name'],
+			'response_count' => $this->response_count
+		);
+		$html = new View($view_file, $arg_array);
+		$this->question_number = 1;
 		foreach ($this->survey_data as $section_name => $section_data) {
 			if ($section_name != 'meta') {
 				if (isset($this->survey_data[$section_name]['title'])) {
 					$html .= '<h3>' . $this->survey_data[$section_name]['title'] . '</h3>' . "\n";
 				}
-				switch ($this->survey_data[$section_name]['type']) {
-
-				// type 1
-				case 1:
-					$colspan = count($section_data['answers']) + 1;
-					$html .= '<table>' . "\n" .
-						'<colgroup><col span="1" style="border-right: 2px solid;"><col span="' . ($colspan * 2) . '" ' .
-						'style="width: 2.5em;">' . "\n" .
-						'<thead>' . "\n" .
-						'<tr><th rowspan="2">' . (isset($section_data['help']) ? $section_data['help'] : '') . '</th>' . "\n" .
-						'<th colspan="' . $colspan . '" style="border-right: 2px solid;">Responses</th><th colspan="' . $colspan . '">' .
-						'Percentage</th></tr>' . "\n" .
-						'<tr><th class="not-1st-child">';
-					$temp_string = '';
-					foreach ($section_data['answers'] as $answer) {
-						$temp_string .= $answer . '</th><th>';
-					}
-					$temp_string = substr($temp_string, 0, -4) . '<th style="border-right: 2px solid;">Tot.</th>';
-					$html .= $temp_string;
-					foreach ($section_data['answers'] as $answer) {
-						$html .= '<th>' . $answer . '</th>';
-					}
-					$html .= '<th>Tot.</th></tr>' . "\n" .
-						'</thead><tbody>' . "\n";
-					foreach ($section_data['summary'] as $ks => $summary) {
-						$html .= '<tr><td>' . $qnum++ . '. ' . $section_data['questions'][$ks] . '</td>';
-						foreach ($summary as $kse => $summary_element) {
-							$html .= '<td>' . $summary_element . '</td>' .
-								(($kse == $colspan - 2) ? '<td style="border-right: 2px solid;">' . $this->response_count . '</td>' : '');
-						}
-						$html .= '<td>100</td></tr>' . "\n";
-					}
-					$html .= '</tbody></table>' . "\n";
-					break;
-
-					// type 2
-				case 2:
-					$html .= '<table>' . "\n" .
-						'<colgroup><col span="1"><col span="2" style="width: 2.5em;">' .
-						'<thead><tr><th>' . $qnum++ . '. ' . $section_data['questions'][0] . '</th>' .
-						'<th>R</th><th>%</th></tr></thead>' .
-						'<tbody>';
-					foreach ($section_data['summary'] as $ks => $summary) {
-						$html .= '<tr><td>' . $section_data['answers'][$ks] . '</td>' .
-							'<td>' . $summary[0] . '</td>' .
-							'<td>' . $summary[1] . '</td></tr>';
-					}
-					$html .= '<tr><td class="total-line">Total</td><td>' . $this->response_count . '</td><td>100</td></tr>' .
-						'</tbody></table>' . "\n";
-					break;
-
-					// type 3
-				case 3:
-					$html .= '<table>' . "\n" .
-						'<colgroup><col span="1"><col span="2" style="width: 2.5em;">' .
-						'<thead>' . "\n" .
-						'<thead><tr><th>' . $qnum++ . '. ' . $section_data['questions'][0] . '</th>' .
-						'<th>R</th><th>%</th></tr></thead>' .
-						'<tbody>';
-					foreach ($section_data['summary'] as $ks => $summary) {
-						$html .= '<tr><td>' . $section_data['answers'][$ks] . '</td>' .
-							'<td>' . $summary[0] . '</td>' .
-							'<td>' . $summary[1] . '</td></tr>';
-					}
-					$html .= '</tbody></table>' . "\n";
-					break;
-				}
+				$view_file = SURVEY_VIEWS . 'stype' . $this->survey_data[$section_name]['type'];
+				$arg_array = array(
+					'question_number' => $this->question_number,
+					'data' => $section_data,
+					'response_count' => $this->response_count
+				);
+				$html .= new View($view_file, $arg_array);
+				$this->question_number += count($section_data['questions']);
 			}
 		}
 		echo $html;
