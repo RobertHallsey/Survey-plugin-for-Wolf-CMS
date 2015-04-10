@@ -1,5 +1,5 @@
 <?php if (!$disabled): ?>
-<p><input type="reset" value="<?php echo __('Clear form and start over') ?>" /><input type="submit" name="submit" value="<?php echo __('Done!') ?>" /></p>
+<p><input type="reset" value="<?php echo __('Clear form and start over') ?>"><input type="submit" name="submit" value="<?php echo __('Done!') ?>"></p>
 </form>
 <?php else: ?>
 </form>

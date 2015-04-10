@@ -216,7 +216,7 @@ class Survey {
 		else {
 			$user_msg = $this->survey_data['meta']['hello'];
 			if ($this->error) {
-				$error_msg = (($this->error > 0)
+				$error_msg = (($this->error> 0)
 					? __('Please answer question #%question_number%', array('%question_number%' => $this->error))
 					: __('Question #%question_number%\'s last option is either/or', array('%question_number' => -$this->error)));
 			}
