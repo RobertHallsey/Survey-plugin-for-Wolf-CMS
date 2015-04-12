@@ -12,12 +12,23 @@
     </tr>
   </thead>
   <tbody>
+<?php $max = 0;
+      foreach ($data['summary'] as $summary):
+          $max = (($summary[0] > $max) ? $summary[0] : $max);
+      endforeach; ?>
 <?php foreach ($data['summary'] as $ks => $summary): ?>
-  <tr>
-    <td><?php echo $data['answers'][$ks] ?></td>
-    <td><?php echo $summary[0] ?></td>
-    <td><?php echo $summary[1] ?></td>
-  </tr>
+    <tr>
+      <td><?php echo $data['answers'][$ks] ?></td>
+<?php if ($summary[0] == $max):
+          $tag1 = '<strong>';
+          $tag2 = '</strong>';
+      else:
+          $tag1 = '';
+          $tag2 = '';
+      endif; ?>
+      <td><?php echo $tag1, $summary[0], $tag2 ?></td>
+      <td><?php echo $tag1, $summary[1], $tag2 ?></td>
+    </tr>
 <?php endforeach; ?>
   </tbody>
 </table>

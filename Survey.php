@@ -91,6 +91,9 @@ class Survey {
 			if ($section_name != 'meta') {
 				switch ($this->survey_data[$section_name]['type']) {
 				case 1:
+          if ( ! array_key_exists('help', $this->survey_data[$section_name])) {
+            $this->survey_data[$section_name]['help'] = '';
+          }
 				case 2:
 					$this->survey_data[$section_name]['responses'] =
 						array_fill(0, count($this->survey_data[$section_name]['questions']), 0);
@@ -156,7 +159,6 @@ class Survey {
 		$answer_count = count($section_data['answers']);
 		foreach ($section_data['questions'] as $kq => $q) {
 			$temp_array = array_count_values($section_data['responses'][$kq]);
-			$max = max($temp_array);
 			$section_data['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
 			foreach ($temp_array as $kt => $temp_value) {
 				$kt--;
@@ -190,7 +192,6 @@ class Survey {
 				$temp_array[$kr] += $r;
 			}
 		}
-		$max = max($temp_array);
 		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
 		foreach ($temp_array as $kt => $temp_value) {
 			$section_data['summary'][$kt][0] = $temp_value;
@@ -201,11 +202,9 @@ class Survey {
 	}
 
 	function render_form() {
-		ob_start();
 		echo $this->build_header(),
 			$this->build_body(),
 			$this->build_footer();
-		ob_end_flush();
 	}
 
 	function build_header() {
@@ -273,9 +272,6 @@ class Survey {
 		$this->question_number = 1;
 		foreach ($this->survey_data as $section_name => $section_data) {
 			if ($section_name != 'meta') {
-				if (isset($this->survey_data[$section_name]['title'])) {
-					$html .= '<h3>' . $this->survey_data[$section_name]['title'] . '</h3>' . "\n";
-				}
 				$view_file = SURVEY_VIEWS . 'stype' . $this->survey_data[$section_name]['type'];
 				$arg_array = array(
 					'question_number' => $this->question_number,
@@ -286,6 +282,7 @@ class Survey {
 				$this->question_number += count($section_data['questions']);
 			}
 		}
+    $html .= new View(SURVEY_VIEWS . 'summaryfooter');
 		echo $html;
 	}
 

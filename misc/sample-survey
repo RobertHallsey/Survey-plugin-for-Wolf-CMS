@@ -6,7 +6,7 @@ goodbye = "Thank you for taking this survey!"
 [section_1]
 type = 1
 title = "Preferences"
-help = "About your preferences..."
+help = "Please select the size that you prefer"
 questions[] = "What size Coke do you prefer?"
 questions[] = "What size popcorn do you prefer?"
 questions[] = "What size candy bar do you prefer?"

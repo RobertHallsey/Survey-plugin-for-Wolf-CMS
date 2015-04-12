@@ -1,3 +1,5 @@
+<div id="surveyform">
+
 
 <h2><?php echo $survey_name ?></h2>
 
@@ -8,3 +10,4 @@
 
 <?php endif; ?>
 <form id="form" name="form" method="post">
+
