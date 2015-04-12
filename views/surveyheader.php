@@ -1,4 +1,4 @@
-<div id="surveyform">
+<div id="sf:"><!-- sf:surveyform -->
 
 
 <h2><?php echo $survey_name ?></h2>

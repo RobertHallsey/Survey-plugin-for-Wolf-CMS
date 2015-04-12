@@ -1,4 +1,4 @@
 
 <p>End of Summary</p>
 
-</div><!-- surveysummary -->
+</div><!-- ss:surveysummary -->

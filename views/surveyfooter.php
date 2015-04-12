@@ -7,7 +7,7 @@
 </form>
 
 <p><?php echo __('Validation Timestamp: ') . date('M. d, Y h:i:s A', $timestamp) ?></p>
-</div><-- surveyform -->
+</div><!-- sf:surveyform -->
 <?php endif; ?>
 <?php if ($execute): ?>
 

@@ -182,11 +182,12 @@ answers[] = "I don't like my job"</pre>
 
 <p>Another way is to incorporate your survey form and chart styling into your general Wolf page layout. You can also have a layout specifically for pages with survey forms and a layout specifically for pages with survey charts Finally, you can have one main layout and use the page metadata to determine if the survey form or survey chart CSS files should be linked in the &lt;head> section. For your convenience, the misc folder has two CSS files you may use.</p>
 
-<p>To help you build a killer CSS file that styles your survey forms and charts exactly the way you want, here's the HTML skeleton for each.</p>
+<p>To help you build a killer CSS file that styles your survey forms and charts exactly the way you want, here's the HTML skeleton for each. Both survey form and survey summary are surrounded by a div with an id attribute. This lets you target your CSS specifically to the elements within. The ids are "sf:" for the survey form and "ss:" for the survey summary. Colons in ids are legal but not frequently used, so they shouldn't clash with ids you've used in your layouts.</p>
 
 <h3>Survey Form HTML Skeleton</h3>
 
-<pre>&lt;form id="form" name="form" method="post">
+<pre>&lt;div id="sf:">&lt;!-- surveyform -->
+&lt;form id="form" name="form" method="post">
 
 &lt;-- Type 1 Questions --&gt;
 &lt;h3>Title Property&lt;/h3>
@@ -224,13 +225,15 @@ answers[] = "I don't like my job"</pre>
 &lt;/fieldset>
 
 &lt;p>input type="reset">&lt;input type="submit">&lt;/p>
-&lt;/form></pre>
+&lt;/form>
+&lt;/div>&lt;!-- sf:surveyform --></pre>
 
 <h3>Survey Chart HTML Skeleton</h3>
 
 <p>And likewise, here is the HTML skeleton for the Survey Chart.</p>
 
-<pre>&lt;h2>Name: Sample Survey&lt;/h2>
+<pre>&lt;div id="ss:">&lt;!-- surveysummary -->
+&lt;h2>Name: Sample Survey&lt;/h2>
 
 &lt;h3>Total Responses: n&lt;/h3>
 
@@ -307,4 +310,8 @@ answers[] = "I don't like my job"</pre>
       &lt;td>&lt;!-- percent of response -->&lt;/td>
     &lt;/tr>
   &lt;/tbody>
-&lt;/table></pre>
+&lt;/table>
+
+&lt;p>End of Summary&lt;/p>
+
+&lt;/div>&lt;!-- ss:surveysummary --></pre>

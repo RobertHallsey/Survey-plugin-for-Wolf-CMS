@@ -1,4 +1,4 @@
-<div id="surveysummar.css">
+<div id="ss:"><!-- ss:surveysummary -->
 
 <h1>Survey Summary</h1>
 
