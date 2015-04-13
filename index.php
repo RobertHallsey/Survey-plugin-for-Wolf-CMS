@@ -38,6 +38,25 @@ Plugin::addController('survey', __('Survey'));
 // Add the models to the autoLoader
 AutoLoader::addFile('Survey', CORE_ROOT . '/plugins/survey/Survey.php');
 
+Observer::observe('part_edit_after_save', 'survey_part_save');
+
+function survey_part_save(&$part)
+{
+    $part_content = $part->content_html;
+    $filename = $part->name;
+   
+    if (count($part_content)) {
+        if (isset($part_content) && !empty($part_content)) {
+           
+            $is_survey = parse_ini_string($part_content);
+           
+            if ($is_survey) {
+                file_put_contents(SURVEY_PATH . $filename, $part_content);
+            }
+        }
+    }
+}
+
 function survey_conduct($survey_name = '') {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		if ($survey_name == '') {
