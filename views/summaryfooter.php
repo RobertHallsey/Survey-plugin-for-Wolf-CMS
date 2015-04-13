@@ -1,4 +1,4 @@
 
-<p>End of Summary</p>
+<p><?php echo __('End of Summary') ?></p>
 
 </div><!-- ss:surveysummary -->

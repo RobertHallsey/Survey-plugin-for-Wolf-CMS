@@ -17,7 +17,13 @@ return array(
 	'Clear form and start over' => 'Despejar el formulario y empezar de nuevo',
 	'Done!' => '¡Completo!',
 	'Validation Timestamp: ' => 'Validación por marca horaria: ',
+	'Survey Summary' => 'Resumen de Encuesta',
+	'Survey Name:' => 'Nombre de la Encuesta:',
+	'Total Responses:' => 'Total de Respuestas:',
+	'Summaries' => 'Resumenes',
+	'Survey Summaries' => 'Resumenes de Encuestas',
 	'Survey response file not found' => 'El archive con las respuestas a la encuesta no se encuentra',
 	'File has lines of different value counts' => 'El archivo tiene lineas con cuentas de valores differentes',
+	'End of Summary' => 'Fin del Resumen'
 
 );

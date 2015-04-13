@@ -63,7 +63,7 @@ function survey_conduct($survey_name = '') {
 			unset($_SESSION['save']);
 		}
 	}
-	$survey->render_form();
+	echo $survey->build_form();
 }
 
 function survey_summarize($survey_name = '') {
@@ -71,10 +71,6 @@ function survey_summarize($survey_name = '') {
 		exit(__('No survey name specified'));
 	}
 	$survey = new Survey;
-	$error = $survey->load_survey_file($survey_name);
-	if ($error) exit($error);
-	$error = $survey->load_survey_responses();
-	if ($error) exit($error);
-	$survey->summarize_responses();
-	$survey->render_chart();
+	$html = $survey->build_summary($survey_name);
+	echo $html;
 }

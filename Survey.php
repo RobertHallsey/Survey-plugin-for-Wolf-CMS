@@ -144,67 +144,8 @@ class Survey {
 		return '';
 	}
 	
-	function summarize_responses() {
-		// summarize responses in $this->survey_data array
-		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				$summarize_function = 'summarize_type' . $this->survey_data[$section_name]['type'];
-				$this->survey_data[$section_name]['summary'] =
-					$this->$summarize_function($section_name, $section_data);
-			}
-		}
-	}
-	
-	function summarize_type1($section_name, $section_data) {
-		$answer_count = count($section_data['answers']);
-		foreach ($section_data['questions'] as $kq => $q) {
-			$temp_array = array_count_values($section_data['responses'][$kq]);
-			$section_data['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
-			foreach ($temp_array as $kt => $temp_value) {
-				$kt--;
-				$section_data['summary'][$kq][$kt] = $temp_value;
-				$section_data['summary'][$kq][$kt + $answer_count] = 
-					round($temp_value / $this->response_count * 100, 0);
-			}
-		}
-		return $section_data['summary'];
-	}
-
-	function summarize_type2($section_name, $section_data) {
-		$answer_count = count($section_data['answers']);
-		$temp_array = array_count_values($section_data['responses'][0]);
-		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
-		foreach ($temp_array as $kt => $temp_value) {
-			$kt--;
-			$section_data['summary'][$kt] = array (
-				0 => $temp_value,
-				1 => round($temp_value / $this->response_count * 100, 0)
-			);
-		}
-		return $section_data['summary'];
-	}
-
-	function summarize_type3($section_name, $section_data) {
-		$answer_count = count($section_data['answers']);
-		$temp_array = array_fill(0, count($section_data['responses']), 0);
-		foreach ($section_data['responses'] as $kr => $response) {
-			foreach ($response as $k => $r) {
-				$temp_array[$kr] += $r;
-			}
-		}
-		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
-		foreach ($temp_array as $kt => $temp_value) {
-			$section_data['summary'][$kt][0] = $temp_value;
-			$section_data['summary'][$kt][1] =
-				round($temp_value / $this->response_count * 100, 0);
-		}
-		return $section_data['summary'];
-	}
-
-	function render_form() {
-		echo $this->build_header(),
-			$this->build_body(),
-			$this->build_footer();
+	function build_form() {
+		return $this->build_header() . $this->build_body() . $this->build_footer();
 	}
 
 	function build_header() {
@@ -262,7 +203,12 @@ class Survey {
 		return new View($view_file, $arg_array);
 	}
 
-	function render_chart() {
+	function build_summary($survey_name) {
+		$error = $this->load_survey_file($survey_name);
+		if ($error) exit($error);
+		$error = $this->load_survey_responses();
+		if ($error) exit($error);
+		$this->summarize_responses();
 		$view_file = SURVEY_VIEWS . 'summaryheader';
 		$arg_array = array(
 			'survey_name' => $this->survey_data['meta']['name'],
@@ -282,8 +228,8 @@ class Survey {
 				$this->question_number += count($section_data['questions']);
 			}
 		}
-    $html .= new View(SURVEY_VIEWS . 'summaryfooter');
-		echo $html;
+    	$html .= new View(SURVEY_VIEWS . 'summaryfooter');
+		return $html;
 	}
 
 	/**
@@ -335,6 +281,63 @@ class Survey {
 		fclose($file_handle);
 		touch($this->survey_file . '-resp.txt', $this->timestamp);
 		$this->js_function = 'formDisable';
+	}
+
+	function summarize_responses() {
+		// summarize responses in $this->survey_data array
+		foreach ($this->survey_data as $section_name => $section_data) {
+			if ($section_name != 'meta') {
+				$summarize_function = 'summarize_type' . $this->survey_data[$section_name]['type'];
+				$this->survey_data[$section_name]['summary'] =
+					$this->$summarize_function($section_name, $section_data);
+			}
+		}
+	}
+	
+	function summarize_type1($section_name, $section_data) {
+		$answer_count = count($section_data['answers']);
+		foreach ($section_data['questions'] as $kq => $q) {
+			$temp_array = array_count_values($section_data['responses'][$kq]);
+			$section_data['summary'][$kq] = array_fill(0, $answer_count * 2, 0);
+			foreach ($temp_array as $kt => $temp_value) {
+				$kt--;
+				$section_data['summary'][$kq][$kt] = $temp_value;
+				$section_data['summary'][$kq][$kt + $answer_count] = 
+					round($temp_value / $this->response_count * 100, 0);
+			}
+		}
+		return $section_data['summary'];
+	}
+
+	function summarize_type2($section_name, $section_data) {
+		$answer_count = count($section_data['answers']);
+		$temp_array = array_count_values($section_data['responses'][0]);
+		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
+		foreach ($temp_array as $kt => $temp_value) {
+			$kt--;
+			$section_data['summary'][$kt] = array (
+				0 => $temp_value,
+				1 => round($temp_value / $this->response_count * 100, 0)
+			);
+		}
+		return $section_data['summary'];
+	}
+
+	function summarize_type3($section_name, $section_data) {
+		$answer_count = count($section_data['answers']);
+		$temp_array = array_fill(0, count($section_data['responses']), 0);
+		foreach ($section_data['responses'] as $kr => $response) {
+			foreach ($response as $k => $r) {
+				$temp_array[$kr] += $r;
+			}
+		}
+		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
+		foreach ($temp_array as $kt => $temp_value) {
+			$section_data['summary'][$kt][0] = $temp_value;
+			$section_data['summary'][$kt][1] =
+				round($temp_value / $this->response_count * 100, 0);
+		}
+		return $section_data['summary'];
 	}
 
 }

@@ -19,17 +19,36 @@ if (!defined('IN_CMS')) exit();
 class SurveyController extends PluginController {
 
 	function __construct() {
-			$this->setLayout('backend');
-			$this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
+		$this->setLayout('backend');
+		$this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
 	}
 
 	function index() {
-		$this->display('survey/views/index', array());
+		$this->display('survey/views/index');
 	}
  
 	function documentation() {
-		$this->display('survey/views/documentation', array());
+		$this->display('survey/views/documentation');
 	}
 
- 
- }
+	function summaries($survey_name = '') {
+		if ($survey_name == '') {
+			foreach (glob(SURVEY_PATH . '*-resp.txt') as $file_entry) {
+				if (filesize($file_entry) > 0) {
+					$survey_file = substr($file_entry, 0, strlen($file_entry) - strlen('-resp.txt'));
+					if (file_exists($survey_file)) {
+						$file_handle = fopen($survey_file, 'r');
+						$line = fgetss($file_handle);
+						$line = trim(fgetss($file_handle));
+						$survey_name = trim(substr($line, strpos($line, '"')), '"');
+						$file_list[] = array(basename($survey_file), $survey_name);
+					}
+				}
+			}
+			$this->display('survey/views/summaries', array('surveys' => $file_list));
+		}
+		$survey = new Survey;
+		$html = $survey->build_summary($survey_name);
+		$this->display('survey/views/summaries', array('html' => $html));
+	} 
+}

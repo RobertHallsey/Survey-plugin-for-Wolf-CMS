@@ -9,5 +9,5 @@
 <p><?php echo $error_msg ?></p>
 
 <?php endif; ?>
-<form id="form" name="form" method="post">
+<form method="post">
 

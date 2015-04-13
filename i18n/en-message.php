@@ -17,7 +17,12 @@ return array(
 	'Clear form and start over' => 'Clear form and start over',
 	'Done!' => 'Done!',
 	'Validation Timestamp: ' => 'Validation Timestamp: ',
+	'Survey Summary' => 'Survey Summary',
+	'Survey Name:' => 'Survey Name:',
+	'Total Responses:' => 'Total Responses:',
+	'Survey Summaries' => 'Survey Summaries',
+	'Summaries' => 'Summaries',
 	'Survey response file not found' => 'Survey response file not found',
 	'File has lines of different value counts' => 'File has lines of different value counts',
-	
+	'End of Summary' => 'End of Summary'
 );

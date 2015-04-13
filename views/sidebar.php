@@ -15,3 +15,4 @@ if (!defined('IN_CMS')) { exit(); }
  */
 ?>
 <p class="button"><a href="<?php echo get_url('plugin/survey/documentation/'); ?>"><img src="<?php echo ICONS_URI;?>documentation-32-ns.png" align="middle" alt="page icon"> <?php echo __('Documentation'); ?></a></p>
+<p class="button"><a href="<?php echo get_url('plugin/survey/summaries/'); ?>"><img src="<?php echo ICONS_URI;?>documentation-32-ns.png" align="middle" alt="page icon"> <?php echo __('Summaries'); ?></a></p>
