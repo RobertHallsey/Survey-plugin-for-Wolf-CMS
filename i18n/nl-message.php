@@ -17,7 +17,7 @@ return array(
 	'Done!' => 'Klaar!',
 	'Validation Timestamp: ' => 'Validatie tijdstempel: ',
 	'Survey Summary' => 'Enquête samenvatting',
-	'Survey Name:' => 'Naam Enquête:',
+	'Survey Name:' => 'Naam enquête:',
 	'Total Responses:' => 'Totaal uitkomsten:',
 	'Summaries' => 'Samenvattingen',
 	'Survey Summaries' => 'Enquête samenvattingen',
