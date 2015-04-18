@@ -16,13 +16,13 @@ return array(
 	'Clear form and start over' => 'Leeg het formulier en begin opnieuw',
 	'Done!' => 'Klaar!',
 	'Validation Timestamp: ' => 'Validatie tijdstempel: ',
-	'Survey Summary' => 'Enquête Samenvatting',
-	'Survey Name:' => 'Enquête Naam:',
-	'Total Responses:' => 'Totaal Responsen:',
+	'Survey Summary' => 'Enquête samenvatting',
+	'Survey Name:' => 'Naam Enquête:',
+	'Total Responses:' => 'Totaal uitkomsten:',
 	'Summaries' => 'Samenvattingen',
-	'Survey Summaries' => 'Enquête Samenvattingen',
-	'Survey response file not there' => 'Enquête responsbestand is niet gevonden',
+	'Survey Summaries' => 'Enquête samenvattingen',
+	'Survey response file not there' => 'Enquête uitkomstbestand is niet gevonden',
 	'File has lines of different value counts' => 'Bestand heeft regels van verschillende waarde tellingen',
-	'End of Summary' => 'Einde Samenvatting'
+	'End of Summary' => 'Einde samenvatting'
 	
 );

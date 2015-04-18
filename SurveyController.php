@@ -33,9 +33,9 @@ class SurveyController extends PluginController {
 
 	function summaries($survey_name = '') {
 		if ($survey_name == '') {
-			foreach (glob(SURVEY_PATH . '*.csv') as $file_entry) {
+			foreach (glob(SURVEY_PATH . '*-resp.txt') as $file_entry) {
 				if (filesize($file_entry) > 0) {
-					$survey_file = substr($file_entry, 0, strlen($file_entry) - strlen('.csv'));
+					$survey_file = substr($file_entry, 0, strlen($file_entry) - strlen('-resp.txt'));
 					if (file_exists($survey_file)) {
 						$file_handle = fopen($survey_file, 'r');
 						$line = fgetss($file_handle);

@@ -38,9 +38,24 @@ Plugin::addController('survey', __('Survey'));
 // Add the models to the autoLoader
 AutoLoader::addFile('Survey', CORE_ROOT . '/plugins/survey/Survey.php');
 
-// To enable entering survey definition file into page part
 Observer::observe('part_edit_after_save', 'survey_part_save');
 
+function survey_part_save(&$part)
+{
+    $part_content = $part->content_html;
+    $filename = $part->name;
+   
+    if (count($part_content)) {
+        if (isset($part_content) && !empty($part_content)) {
+           
+            $is_survey = parse_ini_string($part_content);
+           
+            if ($is_survey) {
+                file_put_contents(SURVEY_PATH . $filename, $part_content);
+            }
+        }
+    }
+}
 
 function survey_conduct($survey_name = '') {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -77,12 +92,4 @@ function survey_summarize($survey_name = '') {
 	$survey = new Survey;
 	$html = $survey->build_summary($survey_name);
 	echo $html;
-}
-
-function survey_part_save(&$part) {
-	if ($part->name != ':survey:') return;
-	$ini_start = strpos($part->content, '[meta]');
-	$filename = SURVEY_PATH . trim(substr($part->content, 0, $ini_start));
-	$part_content = substr($part->content, $ini_start);
-	file_put_contents($filename, $part_content);
 }

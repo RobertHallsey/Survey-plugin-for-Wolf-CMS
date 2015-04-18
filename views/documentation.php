@@ -152,16 +152,16 @@ answers[] = "I don't like my job"</pre>
 <p>Here, table borders are collapsed. Tables are used for Type 1 questions, and collapsing their borders means that there is no space between the right border of one cell and the left border of the next cell. Table data, the cells themselves, are set to centered alignment. This will center the radio buttons under their headings. However, the first cell in a row is the question help or the survey question, so it should be left-aligned.</p>
 
 <pre>&lt;style>
-  table {
-    border-collapse:collapse;
-  }
-  td {
-    text-align: center;
-  }
-  th:first-child,
-  td:first-child {
-    text-align: left;
-  }
+	table {
+		border-collapse:collapse;
+	}
+	td {
+		text-align: center;
+	}
+	th:first-child,
+	td:first-child {
+		text-align: left;
+	}
 &lt;/style></pre>
 
 <h3>summarychart.css</h3>
@@ -169,13 +169,13 @@ answers[] = "I don't like my job"</pre>
 <p>The summary chart all tables. Here, since most cells contain numbers, the cells are right-aligned. However, as in the case of the summary form, the first cell in a row is the question or the answer option, so it is left-aligned.</p>
 
 <pre>&lt;style>
-  td {
-    text-align: right;
-  }
-  th:first-child,
-  td:first-child {
-    text-align: left;
-  }
+	td {
+		text-align: right;
+	}
+	th:first-child,
+	td:first-child {
+		text-align: left;
+	}
 &lt;/style></pre>
 
 <p>There are several ways you can implement styles. The easiest way is to simply place your &lt;style> section in your Wolf page, just before the call to the plugin itself. However, you should know that's poor practice. The code doesn't validate because the &lt;style> tag isn't supposed to go inside the &lt;body> tag.</p>

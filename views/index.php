@@ -25,5 +25,5 @@ if (!defined('IN_CMS')) { exit(); }
 ?&gt;
 </code>
 
-<p>Survey responses are collected in the file "my_survey.csv," also found in the public/ directory.</p>
+<p>Survey responses are collected in the file "my_survey-resp.txt," also found in the public/ directory.</p>
 <p>Please see the Documentation tab for more information.</p>
