@@ -17,10 +17,10 @@ return array(
 	'Done!' => 'Klaar!',
 	'Validation Timestamp: ' => 'Validatie tijdstempel: ',
 	'Survey Summary' => 'Enquête Samenvatting',
-	'Survey Name:' => 'Naam Enquête:',
+	'Survey Name:' => 'Enquête Naam:',
 	'Total Responses:' => 'Totaal Responsen:',
 	'Summaries' => 'Samenvattingen',
-	'Survey Summaries' => 'Samenvattingen Enquête'
+	'Survey Summaries' => 'Enquête Samenvattingen',
 	'Survey response file not there' => 'Enquête responsbestand is niet gevonden',
 	'File has lines of different value counts' => 'Bestand heeft regels van verschillende waarde tellingen',
 	'End of Summary' => 'Einde Samenvatting'
