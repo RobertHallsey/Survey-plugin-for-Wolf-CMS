@@ -15,7 +15,7 @@ if (!defined('IN_CMS')) exit();
 /**
  * class Survey
  */
- 
+
 class Survey {
 
 	protected $survey_name = '';
@@ -26,7 +26,7 @@ class Survey {
 	protected $error = 0;
 	protected $timestamp = 0;
 	protected $js_function = 'formReset';
-	
+
 	function get_variables() {
 		return array (
 			'survey_name' => $this->survey_name,
@@ -38,7 +38,7 @@ class Survey {
 			'js_function' => $this->js_function
 		);
 	}
-	
+
 	function set_variables($vars) {
 		$this->survey_name = $vars['survey_name'];
 		$this->survey_file = $vars['survey_file'];
@@ -84,7 +84,7 @@ class Survey {
 			}
 		}
 	}
-		
+
 	function prefill_survey_responses() {
 		// pre-fill with blank responses
 		foreach ($this->survey_data as $section_name => $section_data) {
@@ -107,7 +107,7 @@ class Survey {
 		}
 		return '';
 	}
-	
+
 	function load_survey_responses() {
 		// load CSV file into $responses[]
 		$response_file = $this->survey_file . '.csv';
@@ -143,7 +143,7 @@ class Survey {
 		}
 		return '';
 	}
-	
+
 	function build_form() {
 		return $this->build_header() . $this->build_body() . $this->build_footer();
 	}
@@ -293,7 +293,7 @@ class Survey {
 			}
 		}
 	}
-	
+
 	function summarize_type1($section_name, $section_data) {
 		$answer_count = count($section_data['answers']);
 		foreach ($section_data['questions'] as $kq => $q) {
@@ -302,7 +302,7 @@ class Survey {
 			foreach ($temp_array as $kt => $temp_value) {
 				$kt--;
 				$section_data['summary'][$kq][$kt] = $temp_value;
-				$section_data['summary'][$kq][$kt + $answer_count] = 
+				$section_data['summary'][$kq][$kt + $answer_count] =
 					round($temp_value / $this->response_count * 100, 0);
 			}
 		}
@@ -327,7 +327,7 @@ class Survey {
 		$answer_count = count($section_data['answers']);
 		$temp_array = array_fill(0, count($section_data['responses']), 0);
 		foreach ($section_data['responses'] as $kr => $response) {
-			foreach ($response as $k => $r) {
+			foreach ($response as $r) {
 				$temp_array[$kr] += $r;
 			}
 		}
@@ -345,7 +345,7 @@ class Survey {
 /**
  * class ValidateType
  */
- 
+
 abstract class ValidateType {
 	protected $question_number = 0;
 	protected $responses = array();

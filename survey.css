@@ -1,0 +1,104 @@
+h2 {
+	display: none;
+}
+
+#sf {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+#sf {
+	font-size: 85%;
+}
+
+#sf h3 {
+	margin: 25px 0 10px 0;
+}
+
+#sf table {
+	border-collapse: collapse;
+}
+
+#sf th {
+	font-weight: normal;
+	text-align: center;
+}
+
+#sf th:first-child {
+	text-align: left;
+}
+
+#sf .type1 thead {
+  border-bottom: 1px solid;
+}
+
+#sf td {
+	text-align: center;
+}
+
+#sf th:nth-child(n+2),
+#sf td:nth-child(n+2) {
+	padding-left: 20px;
+}
+
+#sf fieldset {
+	padding: 0;
+	border: none;
+	margin: 0 0 10px 0;
+}
+
+#ss {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 85%;
+}
+
+#ss table {
+	border-collapse: collapse;
+	border: 2px solid black;
+	table-layout: fixed;
+	margin-bottom: 30px;
+}
+
+#ss col:nth-child(2),
+#ss col:nth-child(3) {
+	width: 38px;
+}
+
+#ss td,
+#ss th {
+	border: 1px solid black;
+}
+
+#ss th {
+	text-align: center;
+	vertical-align: bottom;
+	font-weight: normal;
+	padding: 2px 5px 2px 5px;
+}
+
+#ss th:first-child {
+	text-align: left;
+}
+
+#ss .type1 thead tr:nth-child(2) th:first-child {
+	text-align: center;
+}
+
+
+#ss td {
+	text-align: right;
+	padding: 2px 5px 2px 5px;
+}
+
+#ss table {
+  position: relative;
+}
+
+#ss thead > tr:first-of-type th:not(:first-of-type)::after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 0px;
+  border: 1px solid black;
+  margin-left: -0.5em;
+  height: calc(100% - 3px);
+}

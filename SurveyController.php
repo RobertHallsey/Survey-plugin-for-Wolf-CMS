@@ -47,8 +47,11 @@ class SurveyController extends PluginController {
 			}
 			$this->display('survey/views/summaries', array('surveys' => $file_list));
 		}
-		$survey = new Survey;
-		$html = $survey->build_summary($survey_name);
-		$this->display('survey/views/summaries', array('html' => $html));
-	} 
+		else {
+			$survey = new Survey;
+			$html = $survey->build_summary($survey_name);
+			$this->display('survey/views/summaries', array('html' => $html));
+		}
+	}
+
 }

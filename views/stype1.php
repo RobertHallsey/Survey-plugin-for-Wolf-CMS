@@ -3,33 +3,29 @@
 <h3><?php echo $data['title'] ?></h3>
 
 <?php endif; ?>
-<table class="t1">
+<table class="type1">
   <colgroup>
-    <col class="c1" span="1">
-    <col class="c2" span="<?php echo $colspan ?>">
-    <col class="c3" span="<?php echo $colspan ?>">
+    <col span="1">
+    <col span="<?php echo $colspan ?>">
+    <col span="<?php echo $colspan ?>">
   </colgroup>
   <thead>
     <tr>
-      <th class="a" scope="col" rowspan="2"><?php echo (isset($data['help']) ? $data['help'] : '')?></th>
-      <th class="b" scope="col" colspan="<?php echo $colspan ?>">Responses</th>
-      <th class="c" scope="col" colspan="<?php echo $colspan ?>">Percentage</th>
+      <th scope="row" rowspan="2"><?php echo (isset($data['help']) ? $data['help'] : '')?></th>
+      <th class="col" scope="col" colspan="<?php echo $colspan ?>">Responses</th>
+      <th class="col" scope="col" colspan="<?php echo $colspan ?>">Percentage</th>
     </tr>
     <tr>
 <?php foreach ($data['answers'] as $k => $answer): ?>
-<?php $class = '';
-      if ($k == 0) $class = ' class="d"';
-      if ($k == $colspan - 2) $class = ' class="e"'; ?>
+<?php $class = ($k == 0) ? ' class="col"' : '' ?>
       <th<?php echo $class ?> scope="col"><?php echo $answer ?></th>
 <?php endforeach; ?>
-      <th class="f" scope="col">Tot.</th>
+      <th scope="col">Tot</th>
 <?php foreach ($data['answers'] as $k => $answer): ?>
-<?php $class = '';
-      if ($k == 0) $class = ' class="g"';
-      if ($k == $colspan - 2) $class = ' class="h"'; ?>
+<?php $class = ($k == 0) ? ' class="col"' : '' ?>
       <th<?php echo $class ?> scope="col"><?php echo $answer ?></th>
 <?php endforeach; ?>
-      <th class="i" scope="col">Tot.</th>
+      <th scope="col">Tot</th>
     </tr>
   </thead>
   <tbody>
@@ -46,17 +42,13 @@
           $tag1 = '';
           $tag2 = '';
       endif; ?>
-<?php $class = '';
-      if ($ke == 0) $class = ' class="j"'; //first response column data
-      if ($ke == $colspan - 2) $class = ' class="k"'; // last response column data
-      if ($ke == $colspan - 1) $class = ' class="m"'; // first percentage column data
-      if ($ke == (($colspan - 1) * 2) - 1) $class = ' class="n"' //last percentage column data ?>
+<?php $class = ($ke == 0 || $ke == $colspan - 1) ? ' class="col"' : '' ?>
       <td<?php echo $class ?>><?php echo $tag1, $element, $tag2 ?></td>
 <?php if ($ke == $colspan - 2): // response totals column data ?>
-      <td class="l"><?php echo $response_count ?></td>
+      <td><?php echo $response_count ?></td>
 <?php endif; ?>
 <?php endforeach; // percentage totals column data ?>
-      <td class="o">100</td>
+      <td>100</td>
     </tr>
 <?php endforeach; ?>
   </tbody>
