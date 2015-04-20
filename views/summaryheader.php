@@ -1,4 +1,5 @@
-<div id="ss"><!-- ss surveysummary -->
+
+<div id="ss"><!-- ss survey summary -->
 
 <h2><?php echo __('Survey Summary') ?></h2>
 

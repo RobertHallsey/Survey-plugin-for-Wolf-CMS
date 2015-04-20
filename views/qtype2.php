@@ -1,4 +1,4 @@
-<fieldset class="type3">
+<fieldset class="type2">
   <legend><?php echo $number ?>. <?php echo $data['questions'][0]?></legend>
   <input type="hidden" name="survey_data[<?php echo $name ?>][responses][0]" value="0">
 <?php foreach ($data['answers'] as $a_index => $answer): ?>

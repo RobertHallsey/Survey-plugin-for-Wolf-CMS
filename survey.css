@@ -1,12 +1,11 @@
-h2 {
-	display: none;
-}
+/*
+This is the stylesheet for the Wolf CMS survey plugin.
+*/
+
+/* #sf styles the survey form */
 
 #sf {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-}
-
-#sf {
 	font-size: 85%;
 }
 
@@ -18,6 +17,10 @@ h2 {
 	border-collapse: collapse;
 }
 
+#sf .type1 thead {
+  border-bottom: 1px solid;
+}
+
 #sf th {
 	font-weight: normal;
 	text-align: center;
@@ -25,10 +28,6 @@ h2 {
 
 #sf th:first-child {
 	text-align: left;
-}
-
-#sf .type1 thead {
-  border-bottom: 1px solid;
 }
 
 #sf td {
@@ -46,6 +45,9 @@ h2 {
 	margin: 0 0 10px 0;
 }
 
+
+/* #ss styles the survey summary */
+
 #ss {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 85%;
@@ -58,6 +60,10 @@ h2 {
 	margin-bottom: 30px;
 }
 
+/*
+This width accommodates three digit numbers.
+Expand if you get 1,000s of responses.
+*/
 #ss col:nth-child(2),
 #ss col:nth-child(3) {
 	width: 38px;
@@ -69,26 +75,41 @@ h2 {
 }
 
 #ss th {
-	text-align: center;
 	vertical-align: bottom;
 	font-weight: normal;
 	padding: 2px 5px 2px 5px;
 }
 
-#ss th:first-child {
-	text-align: left;
-}
-
-#ss .type1 thead tr:nth-child(2) th:first-child {
+#ss th[scope="col"] {
 	text-align: center;
 }
 
+#ss th[scope="row"] {
+	text-align: left;
+}
+
+/*
+This fixes the first column heading under "Responses."
+Because this column is preceded by a column heading that uses
+rowspan, it is actually the first column despite being the second
+column from a visual perspective. Without this styling, the column
+aligns to the left.
+*/
+#ss .type1 thead tr:nth-child(2) th:first-child {
+	text-align: center;
+}
 
 #ss td {
 	text-align: right;
 	padding: 2px 5px 2px 5px;
 }
 
+/*
+The following two declarations create the thicker internal column borders.
+Columns are difficult to style in CSS. This technique doesn't actually
+style the borders but instead draws an empty box on top of the column
+borders.
+ */
 #ss table {
   position: relative;
 }

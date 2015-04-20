@@ -1,5 +1,5 @@
-<div id="sf"><!-- sf surveyform -->
 
+<div id="sf"><!-- sf survey form -->
 
 <h2><?php echo $survey_name ?></h2>
 

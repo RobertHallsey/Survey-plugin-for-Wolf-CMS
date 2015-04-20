@@ -9,18 +9,16 @@
 <p>You should have received the plugin in a zip file containing the following files:</p>
 
 <pre>
-\readme.md
-\documentation.htm
 \index.php
+\readme.md
+\sample-survey
 \Survey.php
 \SurveyController.php
 \views\index.php
 \views\sidebar.php
 \i18n\en-message.php
 \i18n\sp-message.php
-\misc\sample-survey
-\misc\survey.css
-\misc\summary.css
+\i18n\nl-message.php
 </pre>
 
 <p>To replace missing files, you may download the latest version from <a href="https://github.com/RobertHallsey/Survey-plugin-for-Wolf-CMS">the plugin's GitHub repository.</a></p>
@@ -33,17 +31,17 @@
 
 <p>After you create one or more survey definition files and place them in Wolf's public directory, use this code in any Wolf page,</p>
 
-<pre>&lt;?php if (Plugin::isEnabled('survey')) survey_conduct('my_survey'); ?&gt;</pre>
+<code>&lt;?php if (Plugin::isEnabled('survey')) survey_conduct('my_survey'); ?>;</code>
 
-<p>where 'my_survey' is the survey definition file you wish to use. The if statement is optional but prevents errors if you disable the plugin while there are still pages that call it.</p>
+<p>where 'my_survey' is the survey definition file you wish to use. The <code>if</code> statement is optional but prevents errors if you disable the plugin while there are still pages that call it.</p>
 
 <p>To display a summary of responses to a particular survey, use this code in any Wolf page,</p>
 
-<pre>&lt;?php if (Plugin::isEnabled('survey')) survey_summarize('my_survey'); ?&gt;</pre>
+<pre>&lt;?php if (Plugin::isEnabled('survey')) survey_summarize('my_survey'); ?>;</pre>
 
 <h2>Creating Your Own Surveys</h2>
 
-<p>The plugin "knows" about surveys because surveys definition files describe the surveys. These files are normal text files that are stored in Wolf's public directory. You can create and edit text files with a text editor like notepad.exe under Windows or TextEdit on a Mac. You can also use a word processor like MS-Word, but make sure in all cases to save files as plain text. Open the sample survey file, called "sample-survey," and take a look at it. You may recognize the familiar INI format, but even if not, at least some of it will make sense at first glance.</p>
+<p>The plugin knows about surveys because surveys definition files describe the surveys. These files are normal text files that are stored in Wolf's public directory. You can create and edit text files with a text editor like notepad.exe under Windows or TextEdit on a Mac. You can also use a word processor like MS-Word, but make sure in all cases to save files as plain text. Open the sample survey file, called "sample-survey," and take a look at it. You may recognize the familiar INI format, but even if not, at least some of it will make sense at first glance.</p>
 
 <h3>Survey Definition Files</h3>
 
@@ -51,15 +49,15 @@
 
 <p>Each section has a variable number of lines, and each line contains a pair of items separated by an equals sign. We call the first item a "property," and the second item the "property's value." Take the first line in the meta section. If you want to get technical, it says that the property value of the property "name" is "Sample Survey." You could also just say, "The name of the survey is 'Sample Survey.'"</p>
 
-<pre>name = "Sample Survey"</pre>
+<code>name = "Sample Survey"</code>
 
 <p>Property-value pairs have a couple of rules. Only certain property names are recognized. Property values that are text must be surrounded by double quotes, but numeric property values should not be. Property names that repeat must end in an empty pair of square brackets ([]).</p>
 
 <p>Let's look at the "meta" section. It contains the following properties:</p>
 
-<pre>name = "Sample Survey"
+<pre><code>name = "Sample Survey"
 hello = "Please answer the following questions."
-goodbye = "Thank you for taking this survey!"</pre>
+goodbye = "Thank you for taking this survey!"</code></pre>
 
 <p>The name property is the name of the survey, and will appear as the survey's title on the survey form. The hello property is the text that introduces the survey and optionally instructs survey takers. The text appears below the survey title on the survey form. The goodbye property is the message that appears instead of the hello message after the survey form is submitted.</p>
 
@@ -67,57 +65,64 @@ goodbye = "Thank you for taking this survey!"</pre>
 
 <h4>Type 1 Question</h4>
 
-<pre>[section_1]
+<pre><code>[section_1]
 type = 1
 title = "Preferences"
-help = "About your preferences..."
+help = "S=small M=medium L=large"
 questions[] = "What size Coke do you prefer?"
 questions[] = "What size popcorn do you prefer?"
 questions[] = "What size candy bar do you prefer?"
 questions[] = "What size T-Shirt do you wear?"
-answers[] = "Small"
-answers[] = "Med."
-answers[] = "Large"
-</pre>
+answers[] = "S"
+answers[] = "M"
+answers[] = "L"</code></pre>
 
-<p>The very first line within any section is the survey question type. In the case of Type 1 questions, there follows a list of questions. Each question must be assigned to the property name "questions," and because there are more than one question, the property name is followed by a pair of empty square brackets.</p>
-
-<p>Recall that, in the case of property values, text is surrounded by double quotes but numbers are not. If you're using Word, the double quotes cannot be curly quotes. They must be the standard straight quotes. Also, it may seem that the name <code>questions</code> is duplicated, but the pairs of empty quotes tell the plugin to insert a running tally number, so the result becomes:</p>
-
-<pre>questions[0] = "What size Coke do you prefer?"
-questions[1] = "What size popcorn do you prefer?"
-questions[2] = "What size candy bar do you prefer?"
-questions[3] = "What size T-Shirt do you wear?"</pre>
-
-<p>And so on and so forth if there are more questions.</p>
-
-<p>After the list of questions, there is a list of possible answers. The possible answers should apply to all the questions. When processing this section, the plugin places each question, followed by three round checkboxes, on its own line. The three round checkboxes appear under the headings Small, Medium, and Large.</p>
+<p>The very first line within any section is the survey question type. Type 1 questions present a panel of questions, all with the same possible answers.</p>
 
 <p>The help property is a message the plugin displays at the top of the questions, to the left of the answer headings. The help property is optional, and only type 1 questions recognize this property.</p>
 
-<p>The title property is also optional, but can be used in all three question types. It's a heading that appears before the question. It's optional so that you can group several questions under the same title.</p>
+<p>The title property is also optional, but can be used in all three question types. It's a heading that appears before the question. It's optional so that you can group several sections under the same title.</p>
+
+<p>Now comes a list of questions followed by a list of possible answers. It may seem that the properties <code>questions</code> and <code>answers</code> are duplicated, but the pairs of empty quotes become a running tally number, so the result becomes:</p>
+
+<pre><code>questions[0] = "What size Coke do you prefer?"
+questions[1] = "What size popcorn do you prefer?"
+questions[2] = "What size candy bar do you prefer?"
+questions[3] = "What size T-Shirt do you wear?"</code></pre>
+
+and:
+
+<pre><code>answers[] = "S"
+answers[] = "M"
+answers[] = "L"</code></pre>
+
+<p>And so on and so forth if there are more questions or answers.</p>
+
+<p>Don't make the answers too long to avoid exceeding the page width. The more answers there are, the shorter the answers should be. Ideally, keep answers to one to three letter or numbers. Use the help property to explain what the answers mean. When processing this section, the plugin places each question, followed by three round checkboxes, on its own line.</p>
+
+<p>Recall that, in the case of property values, text is surrounded by double quotes but numbers are not. If you're using Microsoft Word, the double quotes cannot be curly quotes. They must be the standard straight quotes.</p>
 
 <h4>Type 2 Question</h4>
 
 <p>This type of question allows one and only one multiple choice question.</p>
 
-<pre>[section_4]
+<pre><code>[section_2]
 type = 2
 questions[] = "What kind of car do you drive?"
 answers[] = "Honda"
 answers[] = "Toyota"
 answers[] = "Ford"
 answers[] = "General Motors"
-answers[] = "Other"</pre>
-answers[] = "I don't drive"
+answers[] = "Other"
+answers[] = "I don't drive"</code></pre>
 
-<p>When processing this section, the plugin displays the question on one line, and beneath it, the list of questions, each on its own line, and each starting with a round checkbox to select it. A note on good surveying practice: you should always include a "none of the above" answer.</p>
+<p>When processing this section, the plugin displays the question on one line, and beneath it, the list of questions, each on its own line, and each starting with a round checkbox to select it. A note on good surveying practice: you should always include a catchall answer. A catchall answer makes it possible for everyone to answer the question.</p>
 
 <h4>Type 3 Question</h4>
 
-<p>This is the last survey question type. Like Type 2, it allows only one multiple choice question, except people can check all the answers that apply.</p>
+<p>This is the last survey question type. Like Type 2, it allows one multiple choice question, except people can check all the answers that apply.</p>
 
-<pre>[section_6]
+<pre>[section_3]
 type = 3
 questions[] = "Things you like about your job"
 answers[] = "Short commute"
@@ -129,9 +134,7 @@ answers[] = "Fun environment"
 answers[] = "Pays well"
 answers[] = "I don't like my job"</pre>
 
-<p>When processing this section, the plugin will display the question followed by the list of answers, expect instead of round checkboxes, there will be square checkboxes. The fact that they are square indicates that more than one can be selected at the same time.</p>
-
-<p>A round checkbox is actually called a "radio button," after the row of buttons on car radios that let you select different preset stations. Only one radio button can be pushed at once. If you press a different radio button, the radio button previously pushed in pops out. The square checkbox is called a checkbox, after the checkboxes found on paper forms.</p>
+<p>In the case of Type 3 questions, the last possible answer must always be a catchall answer. The plugin will not allow survey takers to submit a survey in which they have checked some of the answers and the catchall answer. They must select one or the other.</p>
 
 <h2>Taking Your Survey</h2>
 
@@ -141,177 +144,167 @@ answers[] = "I don't like my job"</pre>
 
 <h2>Survey Summaries</h2>
 
-<p>To view a summary of the responses to your survey, view the Wolf page where you entered the PHP code that calls the survey summary function. Summaries are not stored but calculated, so the results will always include all responses entered.</p>
+<p>To view a summary of the responses to your survey, view the Wolf page where you entered the PHP code that calls the survey summary function. Summaries are not stored but calculated every time, so the results will always include the latest responses entered.</p>
+
+<p>You can also view survey summaries from the back end. The survey plugin admin panel offers a choice in the sidebar called "Summaries." This displays a clickable list of surveys found in the public directory. Click on the one you want to view the survey summary.
 
 <h2>Styling Your Survey Forms and Summaries</h2>
 
-<p>The plugin generates the survey forms and summary charts without any styling. Here is probably the minimum styling you would want to apply. </p>
+<p>The plugin includes a stylesheet called survey.css. Wolf CMS automatically links in all plugin CSS files (each file must match its plugin's name), but only in the back end. Wolf CMS imposes no appearance or structure to the front end, leaving it all for you to do via the layout files. If you'd like to use the included survey.css file, you'll need to link to it in your page layout files. You can also create your own stylesheet and link to it instead.</p>
 
-<h3>surveyform.css</h3>
-
-<p>Here, table borders are collapsed. Tables are used for Type 1 questions, and collapsing their borders means that there is no space between the right border of one cell and the left border of the next cell. Table data, the cells themselves, are set to centered alignment. This will center the radio buttons under their headings. However, the first cell in a row is the question help or the survey question, so it should be left-aligned.</p>
-
-<pre>&lt;style>
-  table {
-    border-collapse:collapse;
-  }
-  td {
-    text-align: center;
-  }
-  th:first-child,
-  td:first-child {
-    text-align: left;
-  }
-&lt;/style></pre>
-
-<h3>summarychart.css</h3>
-
-<p>The summary chart all tables. Here, since most cells contain numbers, the cells are right-aligned. However, as in the case of the summary form, the first cell in a row is the question or the answer option, so it is left-aligned.</p>
-
-<pre>&lt;style>
-  td {
-    text-align: right;
-  }
-  th:first-child,
-  td:first-child {
-    text-align: left;
-  }
-&lt;/style></pre>
-
-<p>There are several ways you can implement styles. The easiest way is to simply place your &lt;style> section in your Wolf page, just before the call to the plugin itself. However, you should know that's poor practice. The code doesn't validate because the &lt;style> tag isn't supposed to go inside the &lt;body> tag.</p>
-
-<p>Another way is to incorporate your survey form and chart styling into your general Wolf page layout. You can also have a layout specifically for pages with survey forms and a layout specifically for pages with survey charts Finally, you can have one main layout and use the page metadata to determine if the survey form or survey chart CSS files should be linked in the &lt;head> section. For your convenience, the misc folder has two CSS files you may use.</p>
-
-<p>To help you build a killer CSS file that styles your survey forms and charts exactly the way you want, here's the HTML skeleton for each. Both survey form and survey summary are surrounded by a div with an id attribute. This lets you target your CSS specifically to the elements within. The ids are "sf:" for the survey form and "ss:" for the survey summary. Colons in ids are legal but not frequently used, so they shouldn't clash with ids you've used in your layouts.</p>
+<p>To help you build a killer CSS file that styles your survey forms and charts exactly the way you want, here's the HTML skeleton for each. For brevity and clarity, some attributes and some entire rows are not included. Both survey form and survey summary are surrounded by a div with an id attribute. This lets you target your CSS specifically to the elements within.</p>
 
 <h3>Survey Form HTML Skeleton</h3>
 
-<pre>&lt;div id="sf:">&lt;!-- surveyform -->
-&lt;form id="form" name="form" method="post">
+<pre><code>&lt;div id="sf">&lt;!-- sf surveyform -->
 
-&lt;-- Type 1 Questions --&gt;
-&lt;h3>Title Property&lt;/h3>
-&lt;table>
+&lt;h2>Sample Survey&lt;/h2>
+
+&lt;p>Please complete this survey&lt;/p>
+
+&lt;form method="post">
+
+&lt;h3>Preferences&lt;/h3>
+&lt;table class="type1">
+  &lt;colgroup>
+  	&lt;col span="1">
+    &lt;col span="3">
+  &lt;/colgroup>
   &lt;thead>
     &lt;tr>
-      &lt;th>&lt;!-- empty or displays help property -->&lt;/th>
-      &lt;th>&lt;!-- repeats for each answer option -->&lt;/th>
-   &lt;/tr>
+      &lt;th scope="row">S = small M = medium L = large&lt;/th>
+      &lt;th scope="col">S&lt;/th>
+      &lt;th scope="col">M&lt;/th>
+      &lt;th scope="col">L&lt;/th>
+    &lt;/tr>
   &lt;/thead>
   &lt;tbody>
     &lt;tr>
-      &lt;td>#. Text of question&lt;/td>
-      &lt;!-- next line repeats for each answer option -->
-      &lt;td>&lt;input type="radio">&lt;/td>
+      &lt;th scope="row">1. What size Coke do you prefer?&lt;/th>
+      &lt;td>&lt;input type="radio" value="1">&lt;/td>
+      &lt;td>&lt;input type="radio" value="2">&lt;/td>
+      &lt;td>&lt;input type="radio" value="3">&lt;/td>
     &lt;/tr>
   &lt;/tbody>
 &lt;/table>
 
-&lt;-- Type 2 Questions --&gt;
-&lt;h3>Title Property&lt;/h3>
-&lt;fieldset>
-  &lt;legend>#. Text of question&lt;/legend>&lt;br>
-  &lt;!-- next two lines repeat for each answer option -->
-  &lt;input type="radio" id="Q50">
-  &lt;label for="Q50">Label&lt;/label>&lt;br>
+&lt;h3>Lifestyle&lt;/h3>
+&lt;fieldset class="type2">
+  &lt;legend>5. What kind of car do you drive?&lt;/legend>
+  &lt;input type="radio" value="1">
+  &lt;label for="Q50">Honda&lt;/label>&lt;br>
 &lt;/fieldset>
 
-&lt;-- Type 3 Questions --&gt;
-&lt;fieldset>
-  &lt;legend>#. Text of question&lt;/legend>&lt;br>
-  &lt;!-- next two lines repeat for each answer option -->
-  &lt;input type="checkbox" id="Q60">
-  &lt;label for="Q60">Label&lt;/label>&lt;br>
+&lt;fieldset class="type3">
+  &lt;legend>6. Things you like about your job&lt;/legend>
+  &lt;input type="checkbox" value="1">
+  &lt;label for="Q60">Short commute&lt;/label>&lt;br>
 &lt;/fieldset>
 
-&lt;p>input type="reset">&lt;input type="submit">&lt;/p>
+&lt;p>&lt;input type="reset" value="Clear form and start over">&lt;input type="submit" value="Done!">&lt;/p>
+
 &lt;/form>
-&lt;/div>&lt;!-- sf:surveyform --></pre>
+
+&lt;/div>&lt;!-- sf survey form --></code></pre>
 
 <h3>Survey Chart HTML Skeleton</h3>
 
 <p>And likewise, here is the HTML skeleton for the Survey Chart.</p>
 
-<pre>&lt;div id="ss:">&lt;!-- surveysummary -->
-&lt;h2>Name: Sample Survey&lt;/h2>
+<pre><code>&lt;div id="ss">&lt;!-- ss survey summary -->
 
-&lt;h3>Total Responses: n&lt;/h3>
+&lt;h2>Survey Summary&lt;/h2>
 
-&lt;h3>Title Property&lt;/h3>
+&lt;h3>Survey Name: Sample Survey&lt;/h3>
 
-&lt;-- Type 1 Questions --&gt;
-&lt;table>
+&lt;h3>Total Responses: 53&lt;/h3>
+
+&lt;h3>Preferences&lt;/h3>
+
+&lt;table class="type1">
   &lt;colgroup>
     &lt;col span="1">
-    &lt;col span="n">
+    &lt;col span="4">
+    &lt;col span="4">
   &lt;/colgroup>
   &lt;thead>
     &lt;tr>
-      &lt;th>&lt;!-- empty or displays help property -->&lt;/th>
-      &lt;th>Responses&lt;/th>
-      &lt;th>Percentage&lt;/th>
+      &lt;th scope="row" rowspan="2">S = small M = medium L = large&lt;/th>
+      &lt;th class="col" scope="col" colspan="4">Responses&lt;/th>
+      &lt;th class="col" scope="col" colspan="4">Percentage&lt;/th>
     &lt;/tr>
     &lt;tr>
-      &lt;th>&lt;!-- repeats for each answer option -->&lt;/th>
+      &lt;th class="col" scope="col">S&lt;/th>
+      &lt;th scope="col">M&lt;/th>
+      &lt;th scope="col">L&lt;/th>
+      &lt;th scope="col">Tot&lt;/th>
+      &lt;th class="col" scope="col">S&lt;/th>
+      &lt;th scope="col">M&lt;/th>
+      &lt;th scope="col">L&lt;/th>
+      &lt;th scope="col">Tot&lt;/th>
     &lt;/tr>
   &lt;/thead>
   &lt;tbody>
-    &lt;!-- following table row repeats for each question -->
     &lt;tr>
-      &lt;td>#. Text of question&lt;/td>
-      &lt;!-- next line repeats for each answer option -->
-      &lt;td>&lt;!-- &lt;strong>&lt;/strong> if response is the highest -->&lt;/td>
+      &lt;th scope="row">1. What size Coke do you prefer?&lt;/th>
+      &lt;td class="col">25&lt;/td>
+      &lt;td>&lt;strong>28&lt;/strong>&lt;/td>
+      &lt;td>0&lt;/td>
+      &lt;td>53&lt;/td>
+      &lt;td class="col">47&lt;/td>
+      &lt;td>&lt;strong>53&lt;/strong>&lt;/td>
+      &lt;td>0&lt;/td>
+      &lt;td>100&lt;/td>
     &lt;/tr>
   &lt;/tbody>
 &lt;/table>
 
-&lt;-- Type 2 Questions --&gt;
-&lt;h3>Title Property&lt;/h3>
-&lt;table>
+&lt;h3>Lifestyle&lt;/h3>
+
+&lt;table class="type2">
   &lt;colgroup>
     &lt;col span="1">
     &lt;col span="2">
   &lt;/colgroup>
   &lt;thead>
     &lt;tr>
-      &lt;th>#. Text of question&lt;/th>
-      &lt;th>R&lt;/th>
-      &lt;th>%&lt;/th>
+      &lt;th scope="col">5. What kind of car do you drive?&lt;/th>
+      &lt;th scope="col">R&lt;/th>
+      &lt;th scope="col">%&lt;/th>
     &lt;/tr>
   &lt;/thead>
   &lt;tbody>
-    &lt;!-- following table row repeats for each answer option -->
     &lt;tr>
-      &lt;td>&lt;!-- answer option -->&lt;/td>
-      &lt;td>&lt;!-- response count -->&lt;/td>
-      &lt;td>&lt;!-- percent of response -->&lt;/td>
+      &lt;th scope="row">Honda&lt;/th>
+      &lt;td>6&lt;/td>
+      &lt;td>11&lt;/td>
     &lt;/tr>
   &lt;/tbody>
 &lt;/table>
 
-&lt;-- Type 3 Questions --&gt;
-&lt;table>
+&lt;table class="type3">
   &lt;colgroup>
     &lt;col span="1">
     &lt;col span="2">
   &lt;/colgroup>
   &lt;thead>
     &lt;tr>
-      &lt;th>#. Text of question&lt;/th>
-      &lt;th>R&lt;/th>
-      &lt;th>%&lt;/th>
+      &lt;th scope="col">6. Things you like about your job&lt;/th>
+      &lt;th scope="col">R&lt;/th>
+      &lt;th scope="col">%&lt;/th>
     &lt;/tr>
   &lt;/thead>
   &lt;tbody>
-    &lt;!-- following table row repeats for each answer option -->
     &lt;tr>
-      &lt;td>&lt;!-- answer option -->&lt;/td>
-      &lt;td>&lt;!-- response count -->&lt;/td>
-      &lt;td>&lt;!-- percent of response -->&lt;/td>
+      &lt;th scope="row">Short commute&lt;/th>
+      &lt;td>&lt;strong>19&lt;/strong>&lt;/td>
+      &lt;td>&lt;strong>36&lt;/strong>&lt;/td>
     &lt;/tr>
   &lt;/tbody>
 &lt;/table>
 
 &lt;p>End of Summary&lt;/p>
 
-&lt;/div>&lt;!-- ss:surveysummary --></pre>
+&lt;/div>&lt;!-- ss:survey summary --></code></pre>
+
+<p>Thank you for using this plugin!</p>

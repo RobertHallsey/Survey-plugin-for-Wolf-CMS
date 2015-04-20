@@ -27,3 +27,5 @@
 </script>
 
 <?php endif; ?>
+
+</div><!-- sf survey form -->
