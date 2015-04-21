@@ -2,7 +2,6 @@
 /**
  * Survey Plugin for Wolf CMS language file
  * This file is part of the Survey Plugin for Wolf CMS.
- * Translation by Samuël van Laere <samuelvanlaere@gmail.com>
  */
 
 return array(
