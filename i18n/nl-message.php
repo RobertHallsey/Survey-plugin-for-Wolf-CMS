@@ -1,5 +1,12 @@
 <?php
+/**
+ * Survey Plugin for Wolf CMS language file
+ * This file is part of the Survey Plugin for Wolf CMS.
+ * Translation by Samuël van Laere <samuelvanlaere@gmail.com>
+ */
+
 return array(
+	'Home' => 'Homepage',
 	'Survey' => 'Enquête',
 	'Conduct surveys in WolfCMS.' => 'Enquêtes opstellen in WolfCMS.',
 	'Documentation' => 'Documentatie',
@@ -24,5 +31,5 @@ return array(
 	'Survey response file not there' => 'Enquête uitkomstbestand is niet gevonden',
 	'File has lines of different value counts' => 'Bestand heeft regels van verschillende waarde tellingen',
 	'End of Summary' => 'Einde samenvatting'
-	
-);
+
+   );

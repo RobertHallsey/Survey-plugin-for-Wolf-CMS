@@ -1,6 +1,12 @@
 <?php
+/**
+ * Survey Plugin for Wolf CMS language file
+ * This file is part of the Survey Plugin for Wolf CMS.
+ * Translation by Robert Hallsey <rhallsey@yahoo.com>
+ */
 
 return array(
+	'Home' => 'Página de Origen',
 	'Survey' => 'Encuesta',
 	'Conduct surveys in WolfCMS.' => 'Conducir encuestas en WolfCMS.',
 	'Documentation' => 'Documentación',

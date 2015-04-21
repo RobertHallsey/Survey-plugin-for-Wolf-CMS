@@ -1,3 +1,18 @@
+<?php
+
+/* Security measure */
+if (!defined('IN_CMS')) { exit(); }
+
+/**
+ * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
+ *
+ * This file is part of the Survey Plugin for Wolf CMS.
+ *
+ * @author Robert Hallsey <rhallsey@yahoo.com>
+ * @copyright Robert Hallsey, 2015
+ * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
+ */
+?>
 <h1>Survey Plugin for Wolf CMS</h1>
 
 <h2>Introduction</h2>
@@ -150,9 +165,11 @@ answers[] = "I don't like my job"</pre>
 
 <h2>Styling Your Survey Forms and Summaries</h2>
 
-<p>The plugin includes a stylesheet called survey.css. Wolf CMS automatically links in all plugin CSS files (each file must match its plugin's name), but only in the back end. Wolf CMS imposes no appearance or structure to the front end, leaving it all for you to do via the layout files. If you'd like to use the included survey.css file, you'll need to link to it in your page layout files. You can also create your own stylesheet and link to it instead.</p>
+<p>The plugin includes a stylesheet called survey.css. Wolf CMS automatically links in all plugin CSS files (each file must match its plugin's name), but only in the back end. Wolf CMS imposes no appearance or structure to the front end, leaving it all for you to do via the layout files. If you'd like to use the included survey.css file, you'll need to link to it in your page layout files. Put the following code in the <code>&lt;head></code> section of your page layout.</p>
 
-<p>To help you build a killer CSS file that styles your survey forms and charts exactly the way you want, here's the HTML skeleton for each. For brevity and clarity, some attributes and some entire rows are not included. Both survey form and survey summary are surrounded by a div with an id attribute. This lets you target your CSS specifically to the elements within.</p>
+<code>&lt;link rel="stylesheet" href="wolf/plugins/survey/survey.css" type="text/css"></code>
+
+<p>You can also create your own stylesheet and link to it instead. To help you build a CSS file that styles your survey forms and charts exactly the way you want, here's the HTML skeleton for each. For brevity and clarity, some attributes and some entire rows are not included. Both survey form and survey summary are surrounded by a div with an id attribute. This lets you target your CSS specifically to the elements within.</p>
 
 <h3>Survey Form HTML Skeleton</h3>
 
@@ -207,9 +224,9 @@ answers[] = "I don't like my job"</pre>
 
 &lt;/div>&lt;!-- sf survey form --></code></pre>
 
-<h3>Survey Chart HTML Skeleton</h3>
+<h3>Survey Summary HTML Skeleton</h3>
 
-<p>And likewise, here is the HTML skeleton for the Survey Chart.</p>
+<p>And here is the HTML skeleton for the Survey Summary.</p>
 
 <pre><code>&lt;div id="ss">&lt;!-- ss survey summary -->
 

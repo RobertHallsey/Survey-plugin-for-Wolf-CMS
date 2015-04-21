@@ -1,6 +1,11 @@
 <?php
+/**
+ * Survey Plugin for Wolf CMS language file
+ * This file is part of the Survey Plugin for Wolf CMS.
+ */
 
 return array(
+	'Home' => 'Home',
 	'Survey' => 'Survey',
 	'Conduct surveys in WolfCMS.' => 'Conduct surveys in WolfCMS.',
 	'Documentation' => 'Documentation',
@@ -25,4 +30,5 @@ return array(
 	'Survey response file not found' => 'Survey response file not found',
 	'File has lines of different value counts' => 'File has lines of different value counts',
 	'End of Summary' => 'End of Summary'
+
 );

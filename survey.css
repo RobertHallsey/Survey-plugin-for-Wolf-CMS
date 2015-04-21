@@ -109,12 +109,12 @@ The following two declarations create the thicker internal column borders.
 Columns are difficult to style in CSS. This technique doesn't actually
 style the borders but instead draws an empty box on top of the column
 borders.
- */
+
 #ss table {
   position: relative;
 }
 
-#ss thead > tr:first-of-type th:not(:first-of-type)::after {
+#ss .type1 thead > tr:first-of-type th:not(:first-of-type):after  {
   content: '';
   position: absolute;
   display: block;
@@ -122,4 +122,16 @@ borders.
   border: 1px solid black;
   margin-left: -0.5em;
   height: calc(100% - 3px);
+}
+*/
+
+#ss .col {
+  border-left: 2px solid;
+}
+
+#ss .type2 td:not(:first-child) ,
+#ss .type2 th:not(:first-child) ,
+#ss .type3 td:not(:first-child) ,
+#ss .type3 th:not(:first-child) {
+   border-left: 2px solid;
 }

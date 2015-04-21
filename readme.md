@@ -12,7 +12,9 @@ For notes on accessibility and to learn about creating and styling your own surv
 
 This work is copyright 2015 Robert Hallsey, rhallsey@yahoo.com.
 
-Thanks to Samuel van Laere for his help and advice.
+Thanks for his help and advice to Samuël van Laere <samuelvanlaere@gmail.com>.
+
+Icons provided free by Victor Petrovich Ivlichev <http://www.aha-soft.com>.
 
 This work is provided under the GNU GPL 3.0 license.
 For more info, see https://www.gnu.org/copyleft/gpl.html
