@@ -63,7 +63,12 @@ class SurveyController extends PluginController {
 		}
 		else {
 			$survey = new Survey;
-			$html = $survey->build_summary($survey_name);
+			$error = $survey->load_survey_file($survey_name);
+			if ($error) exit($error);
+			$error = $survey->load_survey_responses();
+			if ($error) exit($error);
+			$survey->summarize_responses();
+			$html = $survey->build_summary($survey_name, TRUE);
 			$this->display('survey/views/summaries', array('html' => $html));
 		}
 	}

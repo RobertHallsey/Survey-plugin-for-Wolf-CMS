@@ -21,8 +21,9 @@ if (!defined('IN_CMS')) { exit(); }
 
 </form>
 
+<?php if ($fancy == TRUE): ?>
 <p><?php echo __('Validation Timestamp: ') . date('M. d, Y h:i:s A', $timestamp) ?></p>
-</div><!-- sf:surveyform -->
+<?php endif; ?>
 <?php endif; ?>
 <?php if ($execute): ?>
 

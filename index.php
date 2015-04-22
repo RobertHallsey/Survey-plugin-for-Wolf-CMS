@@ -50,7 +50,7 @@ Plugin::addController('survey', __('Survey'));
 // Add the models to the autoLoader
 AutoLoader::addFile('Survey', CORE_ROOT . '/plugins/survey/Survey.php');
 
-function survey_conduct($survey_name = '') {
+function survey_conduct($survey_name = '', $fancy = TRUE) {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		if ($survey_name == '') {
 			exit(__('No survey name specified'));
@@ -75,15 +75,20 @@ function survey_conduct($survey_name = '') {
 			unset($_SESSION['save']);
 		}
 	}
-	$html = $survey->build_form();
+	$html = $survey->build_form($fancy);
 	echo $html;
 }
 
-function survey_summarize($survey_name = '') {
+function survey_summarize($survey_name = '', $fancy = TRUE) {
 	if ($survey_name == '') {
 		exit(__('No survey name specified'));
 	}
 	$survey = new Survey;
-	$html = $survey->build_summary($survey_name);
+	$error = $survey->load_survey_file($survey_name);
+	if ($error) exit($error);
+	$error = $survey->load_survey_responses();
+	if ($error) exit($error);
+	$survey->summarize_responses();
+	$html = $survey->build_summary($survey_name, $fancy);
 	echo $html;
 }

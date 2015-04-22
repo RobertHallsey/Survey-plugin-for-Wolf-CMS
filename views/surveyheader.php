@@ -15,6 +15,7 @@ if (!defined('IN_CMS')) { exit(); }
 ?>
 
 <div id="sf"><!-- sf survey form -->
+<?php if ($fancy == TRUE): ?>
 
 <h2><?php echo $survey_name ?></h2>
 
@@ -23,6 +24,7 @@ if (!defined('IN_CMS')) { exit(); }
 <?php if ($error_question): ?>
 <p><?php echo $error_msg ?></p>
 
+<?php endif; ?>
 <?php endif; ?>
 <form method="post">
 

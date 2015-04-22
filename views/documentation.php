@@ -1,7 +1,7 @@
 <?php
 
 /* Security measure */
-if (!defined('IN_CMS')) { exit(); }
+//if (!defined('IN_CMS')) { exit(); }
 
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
@@ -53,6 +53,8 @@ if (!defined('IN_CMS')) { exit(); }
 <p>To display a summary of responses to a particular survey, use this code in any Wolf page,</p>
 
 <pre>&lt;?php if (Plugin::isEnabled('survey')) survey_summarize('my_survey'); ?>;</pre>
+
+<p>Both function calls, <code>survey_conduct</code> and <code>survey_summarize</code> allow an optional second boolean parameter that defaults to <code>TRUE</code>. The parameter (called "fancy") indicates whether or not you want headers and footers in your survey and summary. Since it defaults to <code>TRUE</code>, headers and footers <i>are</i> normally included in the output. If you don't want them, add the second argument <code>FALSE</code>.
 
 <h2>Creating Your Own Surveys</h2>
 
@@ -323,5 +325,52 @@ answers[] = "I don't like my job"</pre>
 &lt;p>End of Summary&lt;/p>
 
 &lt;/div>&lt;!-- ss:survey summary --></code></pre>
+
+<h2>Some Frequently Asked Questions</h2>
+
+<p>1.- Do I have to set up a page for each survey I conduct?</p>
+
+<p>No. Suppose your website has various pages, and you want visitors to be able to click on a link from each page and take a survey related to that page. For a silly example, suppose your website is about fruit, and you have pages for apple, banana, and cherry, so you have survey files called "apple," "banana," and "cherry." Here's what you do. In your apple page, where you want the link to appear, insert this code:</p>
+
+<pre><code>&lt;?php Flash::set('flavor', 'apple') ?>
+&lt;a href="survey-page">Click here to take the Apple survey&lt;/a>
+</code></pre>
+
+<p>Repeat this on the banana and cherry pages, changing the name of the fruit accordingly. Now set up a page and make sure its slug is called <code>survey-page</code>. In that page, place the following code:</p>
+
+<pre><code>&lt;?php
+    $survey_name = Flash::get('flavor');
+    survey_conduct($survey_name);
+?></code></pre>
+
+<p>Flash variables are a way to pass data from one page to another. Whether they are used or not, Flash variables disappear after the next page is loaded, so it doesn't matter if your web visitor clicks on the survey link or not.</p>
+
+<p>2.- Can I put other content on a page that has a survey?</p>
+
+<p>Yes. People probably expect long surveys to be on their own page, but you can certainly mix surveys with other content. For example, you might want to ask visitors to a page if they found the page helpful. For this, you could set up a survey with a single question and present that survey at the bottom of the page.</p>
+
+<p>3.- Can I put surveys and summaries on the same page?</p>
+
+<p>Yes. You can even set it up so the summary is displayed after your visitor completes the survey. Suppose this was the page with the survey for your apple, cherry, and banana pages. Here's the code you would use:</p>
+
+<pre><code>&lt;?php
+    $survey = Flash::get('survey');
+    Flash::set('survey', $survey);
+    survey_conduct($survey);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_SESSION['save'])) {
+        survey_summarize($survey);
+    }
+?></code></pre>
+
+<p>After the survey runs, the code checks to see if the page was posted. This indicates the survey was submitted. However, it might not be filled out completely, so we need to check if the survey was saved successfully. That's the <code>!isset($_SESSION['save'])</code> part. So, if the survey was submitted <i>and</i> it was saved successfully, then display the survey summary just below the completed survey.</p>
+
+<p>If this were not a page that handled multiple surveys, you would do away with the <code>$survey</code> variable and just hardcode the survey name.</p>
+
+<p>4.- Why aren't the surveys stored in the database?</p>
+
+<p>For simplicity and ease. A survey is a complex object. A survey contains one or more sections, and each section contains one or more questions, each question with two or more possible answers and one response. This would have required five database tables, and worse, would have made entering a survey definition a tedious task. By using INI files, the task is reduced basically to typing the list of questions. If you maintain a website for someone who uses surveys, they can give you the list of questions, and you can quickly shape them into INI format with a competent text editor.</p>
+
+<p>Another benefit is that the responses are saved in CSV format. It would have been possible to generate the CSV files on demand from the database, but that would have required additional complexity, additional coding, not to mention an additional step on your part. Instead, you can simply download the response files, and they're ready to be opened by any application that understands the CSV format, like Microsoft Excel. This is useful if you want to analyze the responses beyond what the summary does.</p>
+
 
 <p>Thank you for using this plugin!</p>

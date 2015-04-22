@@ -158,11 +158,14 @@ class Survey {
 		return '';
 	}
 
-	function build_form() {
-		return $this->build_header() . $this->build_body() . $this->build_footer();
+	function build_form($fancy = TRUE) {
+		return
+			$this->build_header($fancy) .
+			$this->build_body() .
+			$this->build_footer($fancy);
 	}
 
-	function build_header() {
+	function build_header($fancy) {
 		$error_msg = '';
 		if ($this->js_function == 'formDisable') {
 			$user_msg = $this->survey_data['meta']['goodbye'];
@@ -180,7 +183,8 @@ class Survey {
 			'survey_name' => $this->survey_data['meta']['name'],
 			'user_msg' => $user_msg,
 			'error_msg' => $error_msg,
-			'error_question' => $this->error
+			'error_question' => $this->error,
+			'fancy' => $fancy
 		);
 		return new View($view_file, $arg_array);
 	}
@@ -206,27 +210,24 @@ class Survey {
 		return $form_html;
 	}
 
-	function build_footer() {
+	function build_footer($fancy) {
 		$execute = (($this->js_function == '') ? '' : $this->js_function . '();');
 		$view_file = SURVEY_VIEWS . 'surveyfooter';
 		$arg_array = array(
 			'execute' => $execute,
 			'disabled' => ($this->js_function == 'formDisable'),
-			'timestamp' => $this->timestamp
+			'timestamp' => $this->timestamp,
+			'fancy' => $fancy
 		);
 		return new View($view_file, $arg_array);
 	}
 
-	function build_summary($survey_name) {
-		$error = $this->load_survey_file($survey_name);
-		if ($error) exit($error);
-		$error = $this->load_survey_responses();
-		if ($error) exit($error);
-		$this->summarize_responses();
+	function build_summary($survey_name, $fancy) {
 		$view_file = SURVEY_VIEWS . 'summaryheader';
 		$arg_array = array(
 			'survey_name' => $this->survey_data['meta']['name'],
-			'response_count' => $this->response_count
+			'response_count' => $this->response_count,
+			'fancy' => $fancy
 		);
 		$html = new View($view_file, $arg_array);
 		$this->question_number = 1;
@@ -236,13 +237,18 @@ class Survey {
 				$arg_array = array(
 					'question_number' => $this->question_number,
 					'data' => $section_data,
-					'response_count' => $this->response_count
+					'response_count' => $this->response_count,
+					'fancy' => $fancy
 				);
 				$html .= new View($view_file, $arg_array);
 				$this->question_number += count($section_data['questions']);
 			}
 		}
-    	$html .= new View(SURVEY_VIEWS . 'summaryfooter');
+		$arg_array = array(
+			'fancy' => $fancy
+		);
+		$view_file = SURVEY_VIEWS . 'summaryfooter';
+    	$html .= new View($view_file, $arg_array);
 		return $html;
 	}
 
