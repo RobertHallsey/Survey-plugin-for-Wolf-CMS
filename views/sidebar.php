@@ -34,7 +34,7 @@ if (!defined('IN_CMS')) { exit(); }
 </p>
 
 <p class="button">
-  <a href="<?php echo get_url('plugin/survey/summaries/'); ?>">
+  <a href="<?php echo get_url('plugin/survey/browse/'); ?>">
     <img src="<?php echo PLUGINS_PATH . 'survey/icons/summaries.png' ?>" align="middle" alt="summaries">
     <?php echo __('Summaries'); ?>
   </a>

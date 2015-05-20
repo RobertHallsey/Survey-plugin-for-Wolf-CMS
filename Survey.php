@@ -32,8 +32,9 @@ if (!defined('IN_CMS')) exit();
 
 class Survey {
 
-	protected $survey_name = '';
+	protected $survey_path = '';
 	protected $survey_file = '';
+	protected $survey_name = '';
 	protected $survey_data = array();
 	protected $response_count = 0;
 	protected $question_number = 1;
@@ -41,10 +42,25 @@ class Survey {
 	protected $timestamp = 0;
 	protected $js_function = 'formReset';
 
+	function __construct($survey_arg = '') {
+		if ($survey_arg) {
+			$this->survey_name = realpath('public/' . $survey_arg);
+			if ($this->survey_name === FALSE) {
+				$this->survey_name = realpath($survey_arg);
+				if ($this->survey_name === FALSE) {
+					exit(__('Survey file not found'));
+				}
+			}
+			$this->survey_path = dirname($this->survey_name);
+			$this->survey_file = basename($this->survey_name);
+		}
+	}
+
 	function get_variables() {
 		return array (
-			'survey_name' => $this->survey_name,
 			'survey_file' => $this->survey_file,
+			'survey_path' => $this->survey_path,
+			'survey_name' => $this->survey_name,
 			'survey_data' => $this->survey_data,
 			'question_number' => $this->question_number,
 			'error' => $this->error,
@@ -54,8 +70,9 @@ class Survey {
 	}
 
 	function set_variables($vars) {
-		$this->survey_name = $vars['survey_name'];
 		$this->survey_file = $vars['survey_file'];
+		$this->survey_path = $vars['survey_path'];
+		$this->survey_name = $vars['survey_name'];
 		$this->survey_data = $vars['survey_data'];
 		$this->question_number = $vars['question_number'];
 		$this->error = $vars['error'];
@@ -66,17 +83,15 @@ class Survey {
 	/**
 	 * Loads survey file into $survey_data array.
 	 *
-	 * @param string $survey_name
+	 * @param string $survey_file
 	 * @return error message or ''
 	 */
-	function load_survey_file($survey_name) {
-		$this->survey_name = $survey_name;
-		$this->survey_file = SURVEY_PATH . $this->survey_name;
-		if (!file_exists($this->survey_file)) {
+	function load_survey_file() {
+		if (!file_exists($this->survey_name)) {
 			return __('Survey file not found');
 		}
 		//check the survey file for errors
-		if (($this->survey_data = parse_ini_file($this->survey_file, TRUE)) == FALSE) {
+		if (($this->survey_data = parse_ini_file($this->survey_name, TRUE)) == FALSE) {
 			return __('Cannot parse survey file');
 		}
 		if (array_key_exists('meta', $this->survey_data) == FALSE) {
@@ -124,7 +139,7 @@ class Survey {
 
 	function load_survey_responses() {
 		// load CSV file into $responses[]
-		$response_file = $this->survey_file . '.csv';
+		$response_file = $this->survey_name . '.csv';
 		if (!file_exists($response_file)) {
 			return __('Survey response file not found');
 		}
@@ -180,7 +195,7 @@ class Survey {
 		}
 		$view_file = SURVEY_VIEWS . 'surveyheader';
 		$arg_array = array(
-			'survey_name' => $this->survey_data['meta']['name'],
+			'survey_title' => $this->survey_data['meta']['name'],
 			'user_msg' => $user_msg,
 			'error_msg' => $error_msg,
 			'error_question' => $this->error,
@@ -222,7 +237,7 @@ class Survey {
 		return new View($view_file, $arg_array);
 	}
 
-	function build_summary($survey_name, $fancy) {
+	function build_summary($survey_file, $fancy = TRUE) {
 		$view_file = SURVEY_VIEWS . 'summaryheader';
 		$arg_array = array(
 			'survey_name' => $this->survey_data['meta']['name'],
@@ -296,10 +311,10 @@ class Survey {
 			}
 		}
 		$cur_line .= "\r\n";
-		$file_handle = fopen($this->survey_file . '.csv', 'a');
+		$file_handle = fopen($this->survey_name . '.csv', 'a');
 		fwrite($file_handle, $cur_line);
 		fclose($file_handle);
-		touch($this->survey_file . '.csv', $this->timestamp);
+		touch($this->survey_name . '.csv', $this->timestamp);
 		$this->js_function = 'formDisable';
 	}
 

@@ -53,6 +53,11 @@ This is the stylesheet for the Wolf CMS survey plugin.
 	font-size: 85%;
 }
 
+#ss p.toscreen {
+  margin: 0 0 10px 0;
+  font-size: 85%;
+}
+
 #ss table {
 	border-collapse: collapse;
 	border: 2px solid black;
@@ -134,4 +139,24 @@ borders.
 #ss .type3 td:not(:first-child) ,
 #ss .type3 th:not(:first-child) {
    border-left: 2px solid;
+}
+
+#ss h3 {
+	margin: 0 0 25px 0;
+}
+
+#ss img {
+  vertical-align: -6px;
+}
+
+#ss p {
+  margin: 0 0 20px 20px;
+}
+
+#ss div:nth-child(2) p {
+  margin: 20px 0 20px 0;
+}
+
+#ss div:nth-child(1) p:nth-child(2) {
+  margin: 20px 0 20px 0;
 }

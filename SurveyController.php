@@ -32,9 +32,14 @@ if (!defined('IN_CMS')) exit();
 
 class SurveyController extends PluginController {
 
+	public $segment;
+	public $full_path;
+	public $up_url;
+
 	function __construct() {
 		$this->setLayout('backend');
 		$this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
+		$this->up_url = '';
 	}
 
 	function index() {
@@ -45,32 +50,88 @@ class SurveyController extends PluginController {
 		$this->display('survey/views/documentation');
 	}
 
-	function summaries($survey_name = '') {
-		if ($survey_name == '') {
-			foreach (glob(SURVEY_PATH . '*.csv') as $file_entry) {
-				if (filesize($file_entry) > 0) {
-					$survey_file = substr($file_entry, 0, strlen($file_entry) - strlen('.csv'));
-					if (file_exists($survey_file)) {
-						$file_handle = fopen($survey_file, 'r');
-						$line = fgetss($file_handle);
-						$line = trim(fgetss($file_handle));
-						$survey_name = trim(substr($line, strpos($line, '"')), '"');
-						$file_list[] = array(basename($survey_file), $survey_name);
-					}
+    function browse() {
+		$this->segment = implode('/', func_get_args());
+		$this->full_path = CMS_ROOT . DS . 'public' . DS . implode(DS, func_get_args());
+		$this->up_url = URL_PUBLIC . 'admin/plugin/survey' . '/browse/' . substr($this->segment, 0, strripos($this->segment, '/', -1));
+		$directory = new DirectoryIterator($this->full_path);
+		$dirs = array();
+		$files = array(
+			'csvs' => array(),
+			'fname' => array(),
+			'ext' => array(),
+			'files' => array(),
+			'surveys' => array()
+		);
+		// separate into dirs, csvs, and other files
+		foreach ($directory as $direntry) {
+			if ($direntry->isDot()) {
+				continue;
+			}
+			if ($direntry->getType() == 'dir') {
+				$dirs[] = $direntry->getFilename();
+			}
+			elseif ((strcasecmp($direntry->getExtension(), 'csv')) == 0) {
+				$files['csvs'][] = substr($direntry->getFilename(), 0, -4);
+			}
+			else {
+				$files['fname'][] = $direntry->getBasename(
+					(strlen($direntry->getExtension()) > 0)
+						? '.' . $direntry->getExtension()
+						: '' );
+				$files['ext'][] = $direntry->getExtension();
+			}
+		}
+		// find possible survey definition files
+		foreach ($files['csvs'] as $csv_file) {
+			$key = array_search($csv_file, $files['fname']);
+			if ($key !== FALSE) {
+				if ($files['ext'][$key]) {
+					$files['ext'][$key] = '.' . $files['ext'][$key];
+				}
+				$files['files'][] = $csv_file . $files['ext'][$key];
+				end($files['files']);
+				$test_file = $this->full_path . DS . $files['files'][key($files['files'])];
+				if (($test_survey = parse_ini_file($test_file, TRUE)) == FALSE) {
+					$files['surveys'][] = 'Error parsing file';
+				}
+				elseif (array_key_exists('meta', $test_survey) == FALSE) {
+					$files['surveys'][] = 'Survey file missing meta section';
+				}
+				elseif ($test_survey['meta']['name'] == '') {
+					$files['surveys'][] = 'Bad file format';
+				}
+				else {
+					$files['surveys'][] = strip_tags($test_survey['meta']['name']);
 				}
 			}
-			$this->display('survey/views/summaries', array('surveys' => $file_list));
 		}
-		else {
-			$survey = new Survey;
-			$error = $survey->load_survey_file($survey_name);
-			if ($error) exit($error);
-			$error = $survey->load_survey_responses();
-			if ($error) exit($error);
-			$survey->summarize_responses();
-			$html = $survey->build_summary($survey_name, TRUE);
-			$this->display('survey/views/summaries', array('html' => $html));
+		$arg_array = array(
+			'full_path' => $this->full_path,
+			'up_url' => $this->up_url,
+			'segment' => $this->segment,
+			'dirs' => $dirs,
+			'surveys' => array_combine($files['files'], $files['surveys'])
+		);
+		$this->display('survey/views/browse', $arg_array);
+	}
+
+	public function view($survey_name = '') {
+		if ($survey_name == '') {
+			exit(__('No survey name specified'));
 		}
+		$survey_name = SURVEY_DATA . implode(DS, func_get_args());
+		$survey = new Survey($survey_name);
+		$error = $survey->load_survey_file($survey_name);
+		if ($error) {exit($error);}
+		$error = $survey->load_survey_responses();
+		if ($error) {exit($error);}
+		$survey->summarize_responses();
+		$html = $survey->build_summary($survey_name);
+		$arg_array = array(
+			'html' => $html
+		);
+		$this->display('survey/views/view', $arg_array);
 	}
 
 }

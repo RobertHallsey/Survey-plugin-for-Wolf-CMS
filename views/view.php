@@ -13,18 +13,16 @@ if (!defined('IN_CMS')) { exit(); }
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
 ?>
+<?php
 
-<div id="sf"><!-- sf survey form -->
-<?php if ($fancy == TRUE): ?>
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>
+<div id="#ss">
 
-<h2><?php echo $survey_title ?></h2>
+<?php echo $html ?>
 
-<p><?php echo $user_msg ?></p>
-
-<?php if ($error_question): ?>
-<p><?php echo $error_msg ?></p>
-
-<?php endif; ?>
-<?php endif; ?>
-<form method="post">
-
+</div>
