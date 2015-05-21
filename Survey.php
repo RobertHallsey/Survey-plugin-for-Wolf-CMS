@@ -285,18 +285,42 @@ class Survey {
 		$this->js_function = '';
 		foreach ($this->survey_data as $section_name => $section_data) {
 			if ($section_name != 'meta') {
-				$arg_array = array(
-					'question_number' => $this->question_number,
-					'responses' => $section_data['responses'],
-				);
-				$validate_type = 'ValidateType' . $section_data['type'];
-				$validation = new $validate_type($arg_array);
-				$this->error = $validation->validate_entry($this->question_number);
+				$validate_function = 'validate_type' . $section_data['type'];
+				$this->error = $this->$validate_function($this->question_number, $section_data['responses']);
+
+//				$validation = new $validate_type($arg_array);
+//				$this->error = $validation->validate_entry($this->question_number);
+
 				if ($this->error) break;
 				$this->question_number += count($section_data['responses']);
 			}
 		}
 		return $this->error;
+	}
+
+	function validate_type1($question_number, $responses) {
+		foreach ($responses as $response) {
+			if ($response == 0) {
+				return $question_number;
+			}
+			$question_number++;
+		}
+		return 0;
+	}
+
+	function validate_type2($question_number, $responses) {
+		return (($responses[0] == 0) ? $question_number : 0);
+	}
+
+	function validate_type3($question_number, $responses) {
+		$array_size = count($responses) - 1;
+		if (in_array(1, array_slice($responses, 0, $array_size)) && $responses[$array_size] == 1) {
+			return -$question_number;
+		}
+		if (!in_array(1, $responses)) {
+			return $question_number;
+		}
+		return 0;
 	}
 
 	function save_data() {
@@ -375,67 +399,4 @@ class Survey {
 		return $section_data['summary'];
 	}
 
-}
-
-/**
- * class ValidateType
- */
-
-abstract class ValidateType {
-	protected $question_number = 0;
-	protected $responses = array();
-
-	public function __construct($argument_set) {
-		$this->question_number = $argument_set['question_number'];
-		$this->responses = $argument_set['responses'];
-	}
-
-	abstract public function validate_entry($x);
-}
-
-class ValidateType1 extends ValidateType {
-
-	public function __construct($argument_set) {
-		parent::__construct($argument_set);
-	}
-
-	public function validate_entry($question_number) {
-		foreach ($this->responses as $response) {
-			if ($response == 0) {
-				return $question_number;
-			}
-			$question_number++;
-		}
-		return 0;
-	}
-}
-
-class ValidateType2 extends ValidateType {
-
-	public function __construct($argument_set) {
-		parent::__construct($argument_set);
-	}
-
-	public function validate_entry($question_number) {
-		return (($this->responses[0] == 0) ? $question_number : 0);
-	}
-}
-
-class ValidateType3 extends ValidateType {
-
-	public function __construct($argument_set) {
-		parent::__construct($argument_set);
-	}
-
-	public function validate_entry($question_number) {
-		$array_size = count($this->responses) - 1;
-		if (in_array(1, array_slice($this->responses, 0, $array_size)) &&
-				$this->responses[$array_size] == 1) {
-			return -$question_number;
-		}
-		if (!in_array(1, $this->responses)) {
-			return $question_number;
-		}
-		return 0;
-	}
 }

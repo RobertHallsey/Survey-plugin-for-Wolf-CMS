@@ -26,5 +26,5 @@ if (!defined('IN_CMS')) { exit(); }
 
 <?php endif; ?>
 <?php endif; ?>
-<form method="post">
+<form id="form" method="post">
 
