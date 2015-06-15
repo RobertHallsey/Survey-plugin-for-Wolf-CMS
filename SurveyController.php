@@ -26,10 +26,23 @@ if (!defined('IN_CMS')) exit();
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ /**
+ * // Some path and URL locations (defined in index.php)
+ * define('SURVEY_ICONS', URL_PUBLIC . 'wolf/plugins/survey/icons/');
+ * define('SURVEY_BROWSE', URL_PUBLIC . 'admin/plugin/survey/browse/');
+ * define('SURVEY_VIEW', URL_PUBLIC . 'admin/plugin/survey/view/');
+ * define('SURVEY_SUMMARIZE', URL_PUBLIC . 'public/');
+ * define('SURVEY_DATA', CMS_ROOT . DS . 'public' . DS);
+ * define('SURVEY_VIEWS', PLUGINS_ROOT . DS . 'survey' . DS . 'views/');
+ * define('SURVEY_RESPONSE_FILE_EXT', 'csv');
+ * // URL_PUBLIC, CMS_ROOT, and PLUGINS_ROOT are Wolf CMS constants
+ */
+ 
 /**
  * class SurveyController
  */
 
+ 
 class SurveyController extends PluginController {
 
 	public $segment;
@@ -52,68 +65,89 @@ class SurveyController extends PluginController {
 
     function browse() {
 		$this->segment = implode('/', func_get_args());
-		$this->full_path = CMS_ROOT . DS . 'public' . DS . implode(DS, func_get_args());
-		$this->up_url = URL_PUBLIC . 'admin/plugin/survey' . '/browse/' . substr($this->segment, 0, strripos($this->segment, '/', -1));
-		$directory = new DirectoryIterator($this->full_path);
+		switch (func_num_args()) {
+			case 0:
+				$this->full_path = SURVEY_DATA;
+				$this->up_url = array(
+					SURVEY_BROWSE,
+					'public'
+				);
+				break;
+			case 1:
+				$this->full_path = SURVEY_DATA . str_replace('/', DS, $this->segment) . DS;
+				$this->up_url = array(
+					SURVEY_BROWSE,
+					$this->segment
+				);
+				break;
+			default:
+				$this->full_path = SURVEY_DATA . str_replace('/', DS, $this->segment) . DS;
+				$this->up_url = array(
+					SURVEY_BROWSE . substr($this->segment, 0, strripos($this->segment, '/', -1)),
+					substr($this->segment, strripos($this->segment, '/', -1) + 1)
+				);
+				break;
+		}
 		$dirs = array();
-		$files = array(
-			'csvs' => array(),
-			'fname' => array(),
-			'ext' => array(),
-			'files' => array(),
-			'surveys' => array()
-		);
-		// separate into dirs, csvs, and other files
-		foreach ($directory as $direntry) {
-			if ($direntry->isDot()) {
-				continue;
-			}
-			if ($direntry->getType() == 'dir') {
-				$dirs[] = $direntry->getFilename();
-			}
-			elseif ((strcasecmp($direntry->getExtension(), 'csv')) == 0) {
-				$files['csvs'][] = substr($direntry->getFilename(), 0, -4);
+		foreach (glob($this->full_path . '*', GLOB_ONLYDIR) as $dir) {
+			$dirs[] = array(
+				SURVEY_BROWSE . str_replace(DS, '/', str_replace(SURVEY_DATA, '', $dir)),
+				basename($dir)
+			);
+		}
+		$files = array();
+		$a = glob($this->full_path . '*'); // all files
+		$b = glob($this->full_path . '*', GLOB_ONLYDIR); // all subdirectories
+		$c = glob($this->full_path . '*.' . SURVEY_RESPONSE_FILE_EXT); // survey response files
+		$d = array_diff($a, $b, $c); // all files except subdirectories and survey response files
+		$e = array_uintersect($d, $c, "self::filename_difference"); // survey definition files
+		foreach ($e as $file) {
+			// verify it's a survey definition file 
+			$test = new Survey($file);
+			$error = $test->load_survey_file();
+			unset($test);
+			if ($error) continue; // not a survey definition file
+			// get first line of text, skipping blank lines
+			$file_handle = fopen($file, 'r');
+			$line = '';
+			do {
+				$line = trim(fgets($file_handle), " \t\r\n\0\x0B");
+			} while ($line == '');
+			fclose($file_handle);
+			// get name following semi-colon, if there
+			if (substr($line, 0, 1) == ';') {
+				do {
+					$line = substr($line, 1);
+				} while (substr($line, 0, 1) == ';' || substr($line, 0, 1) == ' ');
+				$files[] = array(
+					SURVEY_VIEW . str_replace(DS, '/', str_replace(SURVEY_DATA, '', $file)) . basename($file),
+					$line
+				);
 			}
 			else {
-				$files['fname'][] = $direntry->getBasename(
-					(strlen($direntry->getExtension()) > 0)
-						? '.' . $direntry->getExtension()
-						: '' );
-				$files['ext'][] = $direntry->getExtension();
-			}
-		}
-		// find possible survey definition files
-		foreach ($files['csvs'] as $csv_file) {
-			$key = array_search($csv_file, $files['fname']);
-			if ($key !== FALSE) {
-				if ($files['ext'][$key]) {
-					$files['ext'][$key] = '.' . $files['ext'][$key];
-				}
-				$files['files'][] = $csv_file . $files['ext'][$key];
-				end($files['files']);
-				$test_file = $this->full_path . DS . $files['files'][key($files['files'])];
-				if (($test_survey = parse_ini_file($test_file, TRUE)) == FALSE) {
-					$files['surveys'][] = 'Error parsing file';
-				}
-				elseif (array_key_exists('meta', $test_survey) == FALSE) {
-					$files['surveys'][] = 'Survey file missing meta section';
-				}
-				elseif ($test_survey['meta']['name'] == '') {
-					$files['surveys'][] = 'Bad file format';
-				}
-				else {
-					$files['surveys'][] = strip_tags($test_survey['meta']['name']);
-				}
+				$files[] = array(
+					SURVEY_VIEW . str_replace(DS, '/', str_replace(SURVEY_DATA, '', $file)) . basename($file),
+					''
+				);
 			}
 		}
 		$arg_array = array(
-			'full_path' => $this->full_path,
 			'up_url' => $this->up_url,
-			'segment' => $this->segment,
 			'dirs' => $dirs,
-			'surveys' => array_combine($files['files'], $files['surveys'])
+			'files' => $files
 		);
 		$this->display('survey/views/browse', $arg_array);
+	}
+	
+/**
+* Compares the filename part of two fully qualified file references
+*/
+	private function filename_difference($a, $b) {
+		$a = basename($a, '.' . pathinfo($a, PATHINFO_EXTENSION));
+		$b = basename($b, '.' . SURVEY_RESPONSE_FILE_EXT);
+		if ($a < $b) return -1;
+		if ($a > $b) return 1;
+		return 0;
 	}
 
 	public function view($survey_name = '') {

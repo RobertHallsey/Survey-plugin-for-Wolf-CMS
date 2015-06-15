@@ -30,21 +30,22 @@ Plugin::setInfos(array(
 	'id'          => 'survey',
 	'title'       => __('Survey'),
 	'description' => __('Conduct surveys in WolfCMS.'),
-	'version'     => '0.1',
-	'license'     => 'GPL',
+	'version'     => '1.0',
+	'license'     => 'GPLv3',
 	'author'      => 'Robert Hallsey',
 	'website'     => 'http://www.clicketyhome.com/',
 	//'update_url'  => 'http://www.wolfcms.org/plugin-versions.xml',
 	'require_wolf_version' => '0.7.7'
 ));
 
-// Some path locations
+// Some path and URL locations
 define('SURVEY_ICONS', URL_PUBLIC . 'wolf/plugins/survey/icons/');
 define('SURVEY_BROWSE', URL_PUBLIC . 'admin/plugin/survey/browse/');
-define('SURVEY_VIEW', BASE_URL . 'plugin/survey/view/');
+define('SURVEY_VIEW', URL_PUBLIC . 'admin/plugin/survey/view/');
+define('SURVEY_SUMMARIZE', URL_PUBLIC . 'public/');
 define('SURVEY_DATA', CMS_ROOT . DS . 'public' . DS);
-define('SURVEY_ROOT', PLUGINS_ROOT . DS . 'survey' . DS);
-define('SURVEY_VIEWS', SURVEY_ROOT . 'views/');
+define('SURVEY_VIEWS', PLUGINS_ROOT . DS . 'survey' . DS . 'views/');
+define('SURVEY_RESPONSE_FILE_EXT', 'csv');
 
 // Add the plugin's tab and controller
 Plugin::addController('survey', __('Survey'));
@@ -52,7 +53,7 @@ Plugin::addController('survey', __('Survey'));
 // Add the models to the autoLoader
 AutoLoader::addFile('Survey', CORE_ROOT . '/plugins/survey/Survey.php');
 
-function survey_conduct($given_survey = '', $fancy = TRUE) {
+function survey_conduct($given_survey = '') {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		if ($given_survey === '') {
 			exit(__('No survey name specified'));
@@ -77,11 +78,11 @@ function survey_conduct($given_survey = '', $fancy = TRUE) {
 			unset($_SESSION['save']);
 		}
 	}
-	$html = $survey->build_form($fancy);
+	$html = $survey->build_form();
 	echo $html;
 }
 
-function survey_summarize($survey_name = '', $fancy = TRUE) {
+function survey_summarize($survey_name = '') {
 	if ($survey_name == '') {
 		exit(__('No survey name specified'));
 	}
@@ -91,6 +92,6 @@ function survey_summarize($survey_name = '', $fancy = TRUE) {
 	$error = $survey->load_survey_responses();
 	if ($error) exit($error);
 	$survey->summarize_responses();
-	$html = $survey->build_summary($survey_name, $fancy);
+	$html = $survey->build_summary($survey_name);
 	echo $html;
 }

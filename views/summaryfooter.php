@@ -13,9 +13,4 @@ if (!defined('IN_CMS')) { exit(); }
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
 ?>
-<?php if ($fancy == TRUE) : ?>
-
-<p><?php echo __('End of Summary') ?></p>
-
-<?php endif; ?>
 </div><!-- ss:survey summary -->

@@ -15,16 +15,9 @@ if (!defined('IN_CMS')) { exit(); }
 ?>
 
 <div id="sf"><!-- sf survey form -->
-<?php if ($fancy == TRUE): ?>
-
-<h2><?php echo $survey_title ?></h2>
-
-<p><?php echo $user_msg ?></p>
-
 <?php if ($error_question): ?>
 <p><?php echo $error_msg ?></p>
 
-<?php endif; ?>
 <?php endif; ?>
 <form id="form" method="post">
 

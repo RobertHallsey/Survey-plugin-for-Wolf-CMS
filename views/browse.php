@@ -18,22 +18,25 @@ if (!defined('IN_CMS')) { exit(); }
 <h1>Folders</h1>
 
 <p>
-<?php if ($segment == ''): ?>
+<?php if ($up_url[0] === SURVEY_BROWSE && $up_url[1] == 'public'): ?>
   <img src="<?php echo SURVEY_ICONS, 'public.png' ?>" alt="current directory">
   &nbsp;&nbsp;/public
 <?php else: ?>
-  <a href="<?php echo $up_url ?>">
+   <a href="<?php echo $up_url[0] ?>">
 	<img src="<?php echo SURVEY_ICONS, 'pathup.png' ?>" alt="current directory">
-	&nbsp;&nbsp;<?php echo $segment ?>
+	&nbsp;&nbsp;<?php echo $up_url[1] ?>
   </a>
 <?php endif; ?>
 </p>
 
+<?php /*
+*/ ?>
+
 <?php foreach($dirs as $dir): ?>
 <p>
-  <a href="<?php echo SURVEY_BROWSE, $segment, (($segment) ? '/' : ''), $dir ?>">
+  <a href="<?php echo $dir[0] ?>">
 	<img src="<?php echo SURVEY_ICONS, 'folder.png' ?>" alt="folder">
-	&nbsp;&nbsp;<?php echo $dir ?>
+	&nbsp;&nbsp;<?php echo $dir[1] ?>
   </a>
 </p>
 <?php endforeach; ?>
@@ -42,18 +45,18 @@ if (!defined('IN_CMS')) { exit(); }
 <div style="float:right; width: 70%;">
 <h1><?php echo __('Survey Summaries') ?></h1>
 
-<?php if ($surveys): ?>
-<?php foreach ($surveys as $sfile => $sname): ?>
+<?php if ($files): ?>
+<?php foreach ($files as $file): ?>
 <p>
-  <a href="<?php echo SURVEY_VIEW, $segment, (($segment) ? '/' : ''), $sfile ?>">
+  <a href="<?php echo $file[0]?>">
 	<img src="<?php echo PLUGINS_PATH . 'survey/icons/text.png' ?>" alt="summary">
-	&nbsp;&nbsp;<?php echo $sname ?>
+	&nbsp;&nbsp;<?php echo $file[1] ?>
   </a>
 </p>
 <?php endforeach; ?>
 <?php else: ?>
-<p>No survey summaries found<br>
-	in this directory</p>
+<p>No survey summaries<br>
+	found in this directory</p>
 <?php endif; ?>
 </div>
 
