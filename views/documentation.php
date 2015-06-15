@@ -54,6 +54,8 @@
 
 <pre>&lt;?php if (Plugin::isEnabled('survey')) survey_summarize('my_survey'); ?>;</pre>
 
+<p>Both function calls, <code>survey_conduct</code> and <code>survey_summarize</code> allow an optional second boolean parameter that defaults to <code>TRUE</code>. The parameter (called "fancy") indicates whether or not you want headers and footers in your survey and summary. Since it defaults to <code>TRUE</code>, headers and footers <i>are</i> normally included in the output. If you don't want them, add the second argument <code>FALSE</code>.
+
 <h2>Creating Your Own Surveys</h2>
 
 <p>The plugin knows about surveys because surveys definition files describe the surveys. These files are normal text files that are stored in Wolf's public directory. You can create and edit text files with a text editor like notepad.exe under Windows or TextEdit on a Mac. You can also use a word processor like MS-Word, but make sure in all cases to save files as plain text. Open the sample survey file, called "sample-survey," and take a look at it. You may recognize the familiar INI format, but even if not, at least some of it will make sense at first glance.</p>
