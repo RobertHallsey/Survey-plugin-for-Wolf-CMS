@@ -1,145 +1,213 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) exit();
-
-/**
- * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
- *
- * @author Robert Hallsey <rhallsey@yahoo.com>
- * @copyright Robert Hallsey, 2015
- * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
- *
- * This file is part of the Survey Plugin for Wolf CMS.
- *
- * The Survey Plugin for Wolf CMS is free software: you can redistribute
- * it and/or modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * The Survey Plugin for Wolf CMS is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
- * class Survey
- */
+// set SURVEY_BASE_PATH somewhere
 
 class Survey {
 
-	protected $survey_path = '';
+	const SURVEY_VIEWS = SURVEY_BASE_PATH . 'views' . DIRECTORY_SEPARATOR;
+	const SURVEY_RESET_BUTTON = 'Reset';
+	const SURVEY_SUBMIT_BUTTON = 'Submit';
+	const SURVEY_RESPONSE_FILE_EXT = 'csv';
+	const SURVEY_ERROR_NO_RESPONSE = 'Please answer question #%d';
+	const SURVEY_ERROR_EITHER_OR = 'Last option is either/or in question #%d';
+
 	protected $survey_file = '';
-	protected $survey_name = '';
 	protected $survey_data = array();
-	protected $response_count = 0;
-	protected $question_number = 1;
+	protected $js_function = 'formReset';
 	protected $error = 0;
 	protected $timestamp = 0;
-	protected $js_function = 'formReset';
-
-	function __construct($survey_arg = '') {
-		if ($survey_arg) {
-			$this->survey_name = realpath('public/' . $survey_arg);
-			if ($this->survey_name === FALSE) {
-				$this->survey_name = realpath($survey_arg);
-				if ($this->survey_name === FALSE) {
-					exit(__('Survey file not found'));
-				}
-			}
-			$this->survey_path = dirname($this->survey_name);
-			$this->survey_file = basename($this->survey_name);
+	protected $response_count = 0;
+	
+	public function __construct($survey_arg = '') {
+		if ($survey_arg == '') {
+			exit(__('No survey name specified'));
+		}
+		$this->survey_file = realpath($survey_arg);
+		if ($this->survey_file === FALSE) {
+			exit(__('Survey file not found'));
 		}
 	}
 
-	function get_variables() {
-		return array (
-			'survey_file' => $this->survey_file,
-			'survey_path' => $this->survey_path,
-			'survey_name' => $this->survey_name,
-			'survey_data' => $this->survey_data,
-			'question_number' => $this->question_number,
-			'error' => $this->error,
-			'timestamp' => $this->timestamp,
-			'js_function' => $this->js_function
-		);
+	public function prepareSurvey() {
+		$error = $this->loadSurveyFile();
+		if ($error) exit($error);
+		$this->prefillSurveyResponses();
 	}
-
-	function set_variables($vars) {
-		$this->survey_file = $vars['survey_file'];
-		$this->survey_path = $vars['survey_path'];
-		$this->survey_name = $vars['survey_name'];
-		$this->survey_data = $vars['survey_data'];
-		$this->question_number = $vars['question_number'];
-		$this->error = $vars['error'];
-		$this->timestamp = $vars['timestamp'];
-		$this->js_function = $vars['js_function'];
-	}
-
-	/**
-	 * Loads survey file into $survey_data array.
-	 *
-	 * @param string $survey_file
-	 * @return error message or ''
-	 */
-	function load_survey_file() {
-		if (!file_exists($this->survey_name)) {
+	
+	public function loadSurveyFile() {
+		if (!file_exists($this->survey_file)) {
 			return __('Survey file not found');
 		}
 		//check the survey file for errors
-		if (($this->survey_data = parse_ini_file($this->survey_name, TRUE)) == FALSE) {
+		if (($this->survey_data = parse_ini_file($this->survey_file, TRUE)) == FALSE) {
 			return __('Cannot parse survey file');
 		}
-		if (array_key_exists('meta', $this->survey_data) == FALSE) {
-			return __('Survey file missing meta section');
-		}
 		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				if (!array_key_exists('type', $section_data)) {
-					return __('Section \'%name%\' has missing Type property', array('%name%' => $section_name));
-				}
-				if (!array_key_exists('questions', $section_data) ||
-					 (!is_array($section_data['questions']))) {
-					return __('Section \'%name%\' has missing or malformed questions', array('%name%' => $section_name));
-				}
-				if (!array_key_exists('answers', $section_data) ||
-					 (!is_array($section_data['answers']))) {
-					return __('Section \'%name%\' has missing or malformed answers', array('%name%' => $section_name));
-				}
+			if (!array_key_exists('type', $section_data)) {
+				return __("Section $section_name has no Type property.");
+			}
+			if (!array_key_exists('questions', $section_data) ||
+				 (!is_array($section_data['questions']))) {
+				return __("Section $section_name has missing or malformed questions.");
+			}
+			if (!array_key_exists('answers', $section_data) ||
+				 (!is_array($section_data['answers']))) {
+				return __("Section $section_name has missing or malformed answers.");
 			}
 		}
 	}
 
-	function prefill_survey_responses() {
+	public function prefillSurveyResponses() {
 		// pre-fill with blank responses
 		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				switch ($this->survey_data[$section_name]['type']) {
-				case 1:
-          if ( ! array_key_exists('help', $this->survey_data[$section_name])) {
-            $this->survey_data[$section_name]['help'] = '';
-          }
-				case 2:
-					$this->survey_data[$section_name]['responses'] =
-						array_fill(0, count($this->survey_data[$section_name]['questions']), 0);
-					break;
-				case 3:
-					$this->survey_data[$section_name]['responses'] =
-						array_fill(0, count($this->survey_data[$section_name]['answers']), 0);
-					break;
+			switch ($this->survey_data[$section_name]['type']) {
+			case 1:
+				if ( ! array_key_exists('help', $this->survey_data[$section_name])) {
+					$this->survey_data[$section_name]['help'] = '';
 				}
+				// no break here;
+			case 2:
+				$this->survey_data[$section_name]['responses'] =
+					array_fill(0, count($this->survey_data[$section_name]['questions']), 0);
+				break;
+			case 3:
+				$this->survey_data[$section_name]['responses'] =
+					array_fill(0, count($this->survey_data[$section_name]['answers']), 0);
+				break;
 			}
 		}
-		return '';
 	}
 
-	function load_survey_responses() {
+	public function processSurvey($survey_save, $survey_data) {
+		$status = FALSE;
+		$this->survey_data =
+			array_replace_recursive(
+				unserialize(base64_decode($survey_save)),
+				$survey_data);
+		if ($this->validateErrors() == 0) {
+			$this->saveData();
+			$status = TRUE;
+		}
+		return $status;
+	}
+	
+	public function validateErrors() {
+		$question_number = 1;
+		$this->error = 0;
+		$this->js_function = '';
+		foreach ($this->survey_data as $section_name => $section_data) {
+			$validate_function = 'validateType' . $section_data['type'];
+			$this->error = $this->$validate_function($question_number, $section_data['responses']);
+			if ($this->error) break;
+			$question_number += count($section_data['responses']);
+		}
+		return $this->error;
+	}
+
+	private function validateType1($question_number, $responses) {
+		foreach ($responses as $response) {
+			if ($response == 0) {
+				return $question_number;
+			}
+			$question_number++;
+		}
+		return 0;
+	}
+
+	private function validateType2($question_number, $responses) {
+		return (($responses[0] == 0) ? $question_number : 0);
+	}
+
+	private function validateType3($question_number, $responses) {
+		$array_size = count($responses) - 1;
+		if (in_array(1, array_slice($responses, 0, $array_size)) && $responses[$array_size] == 1) {
+			return -$question_number;
+		}
+		if (!in_array(1, $responses)) {
+			return $question_number;
+		}
+		return 0;
+	}
+
+	public function saveData() {
+		$this->timestamp = time();
+		$cur_line = '"' . date('Y-m-d', $this->timestamp) . '",' .
+					'"' . date('H:i:s', $this->timestamp) . '"';
+		foreach ($this->survey_data as $section_name => $section_data) {
+			foreach ($section_data['responses'] as $response) {
+				$cur_line .= ',' . $response;
+			}
+		}
+		$cur_line .= "\r\n";
+		$file_name = '';
+		if (strpos($this->survey_file, '.') !== FALSE) {
+			$file_name = substr($this->survey_file, 0, strripos($this->survey_file, '.') + 1);
+		}
+		else {
+			$file_name = $this->survey_file;
+		}
+		$file_name .= '.' . Self::SURVEY_RESPONSE_FILE_EXT;
+		$file_handle = fopen($file_name, 'a');
+		fwrite($file_handle, $cur_line);
+		fclose($file_handle);
+		touch($file_name, $this->timestamp);
+		$this->js_function = 'formDisable';
+	}
+	
+	public function theForm() {
+		// build header
+		$html = '';
+		$error_msg = '';
+		if ($this->error) {
+			$error_msg = (($this->error > 0)
+				? sprintf(Self::SURVEY_ERROR_NO_RESPONSE, $this->error)
+				: sprintf(Self::SURVEY_ERROR_EITHER_OR, -$this->error));
+		}
+		$view_file = Self::SURVEY_VIEWS . 'surveyheader';
+		$variables = array(
+			'survey_file' => $this->survey_file,
+			'survey_save' => base64_encode(serialize($this->survey_data)),
+			'error_msg' => $error_msg,
+			'error_question' => abs($this->error)
+		);
+		$html .= new View($view_file, $variables);
+		// build body
+		$question_number = 1;
+		foreach ($this->survey_data as $section_name => $section_data) {
+			$view_file = Self::SURVEY_VIEWS . 'qtype' . $this->survey_data[$section_name]['type'];
+			$variables = array(
+				'heading' => ((isset($this->survey_data[$section_name]['title']))
+					 ? $this->survey_data[$section_name]['title'] : ''),
+				'number' => $question_number,
+				'name' => $section_name,
+				'data' => $section_data,
+			);
+			$html .= new View($view_file, $variables);
+			$question_number += count($section_data['questions']);
+		}
+		// build footer
+		$js_code = (($this->js_function == '') ? '' : $this->js_function . '();');
+		$view_file = Self::SURVEY_VIEWS . 'surveyfooter';
+		$variables = array(
+			'js_code' => $js_code,
+			'disabled' => ($this->js_function == 'formDisable'),
+			'timestamp' => $this->timestamp,
+		);
+		$html .= new View($view_file, $variables);
+		return $html;
+	}
+
+	public function prepareSummary() {
+		$error = $this->loadSurveyFile();
+		if ($error) exit($error);
+		$error = $this->loadSurveyResponses();
+		if ($error) exit($error);
+		$this->summarizeResponses();
+	}
+
+	public function loadSurveyResponses() {
 		// load CSV file into $responses[]
-		$response_file = $this->survey_name . '.csv';
+		$response_file = $this->survey_file . '.' . Self::SURVEY_RESPONSE_FILE_EXT;
 		if (!file_exists($response_file)) {
 			return __('Survey response file not found');
 		}
@@ -157,203 +225,30 @@ class Survey {
 			}
 		}
 		$this->response_count = count($responses);
-		// load $responses[] into $survey array
+		// load $responses[] into survey array
 		foreach ($responses as $response) {
 			$offset = 2;
 			foreach ($this->survey_data as $section_name => $section_data) {
-				if ($section_name != 'meta') {
-					$section_type = (($this->survey_data[$section_name]['type'] == 3) ? 'answers' : 'questions');
-					foreach ($section_data[$section_type] as $k => $v) {
-						$this->survey_data[$section_name]['responses'][$k][] = $response[$offset];
-						$offset++;
-					}
+				$section_type = (($this->survey_data[$section_name]['type'] == 3) ? 'answers' : 'questions');
+				foreach ($section_data[$section_type] as $k => $v) {
+					$this->survey_data[$section_name]['responses'][$k][] = $response[$offset];
+					$offset++;
 				}
 			}
 		}
 		return '';
 	}
 
-	function build_form($fancy = TRUE) {
-		return
-			$this->build_header($fancy) .
-			$this->build_body() .
-			$this->build_footer($fancy);
-	}
-
-	function build_header($fancy) {
-		$error_msg = '';
-		if ($this->js_function == 'formDisable') {
-			$user_msg = $this->survey_data['meta']['goodbye'];
-		}
-		else {
-			$user_msg = $this->survey_data['meta']['hello'];
-			if ($this->error) {
-				$error_msg = (($this->error> 0)
-					? __('Please answer question #%question_number%', array('%question_number%' => $this->error))
-					: __('Question #%question_number%\'s last option is either/or', array('%question_number' => -$this->error)));
-			}
-		}
-		$view_file = SURVEY_VIEWS . 'surveyheader';
-		$arg_array = array(
-			'survey_title' => $this->survey_data['meta']['name'],
-			'user_msg' => $user_msg,
-			'error_msg' => $error_msg,
-			'error_question' => $this->error,
-			'fancy' => $fancy
-		);
-		return new View($view_file, $arg_array);
-	}
-
-	function build_body() {
-		$form_html = '';
-		$question_number = 1;
-		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				if (isset($this->survey_data[$section_name]['title'])) {
-					$form_html .= '<h3>' . $this->survey_data[$section_name]['title'] . '</h3>' . "\n";
-				}
-				$view_file = SURVEY_VIEWS . 'qtype' . $this->survey_data[$section_name]['type'];
-				$arg_array = array(
-					'number' => $question_number,
-					'name' => $section_name,
-					'data' => $section_data,
-				);
-				$form_html .= new View($view_file, $arg_array);
-				$question_number += count($section_data['questions']);
-			}
-		}
-		return $form_html;
-	}
-
-	function build_footer($fancy) {
-		$execute = (($this->js_function == '') ? '' : $this->js_function . '();');
-		$view_file = SURVEY_VIEWS . 'surveyfooter';
-		$arg_array = array(
-			'execute' => $execute,
-			'disabled' => ($this->js_function == 'formDisable'),
-			'timestamp' => $this->timestamp,
-			'fancy' => $fancy
-		);
-		return new View($view_file, $arg_array);
-	}
-
-	function build_summary($survey_file, $fancy = TRUE) {
-		$view_file = SURVEY_VIEWS . 'summaryheader';
-		$arg_array = array(
-			'survey_name' => $this->survey_data['meta']['name'],
-			'response_count' => $this->response_count,
-			'fancy' => $fancy
-		);
-		$html = new View($view_file, $arg_array);
-		$this->question_number = 1;
-		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				$view_file = SURVEY_VIEWS . 'stype' . $this->survey_data[$section_name]['type'];
-				$arg_array = array(
-					'question_number' => $this->question_number,
-					'data' => $section_data,
-					'response_count' => $this->response_count,
-					'fancy' => $fancy
-				);
-				$html .= new View($view_file, $arg_array);
-				$this->question_number += count($section_data['questions']);
-			}
-		}
-		$arg_array = array(
-			'fancy' => $fancy
-		);
-		$view_file = SURVEY_VIEWS . 'summaryfooter';
-    	$html .= new View($view_file, $arg_array);
-		return $html;
-	}
-
-	/**
-	 * Updates $survey_data array after form POST.
-	 *
-	 * @param array $data
-	 * @return nothing
-	 */
-	function update_survey_data($data) {
-		foreach ($data as $section_name => $section_data) {
-			$this->survey_data[$section_name]['responses'] = $section_data['responses'];
-		}
-	}
-
-	function validate_errors() {
-		$this->question_number = 1;
-		$this->error = 0;
-		$this->js_function = '';
-		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				$validate_function = 'validate_type' . $section_data['type'];
-				$this->error = $this->$validate_function($this->question_number, $section_data['responses']);
-
-//				$validation = new $validate_type($arg_array);
-//				$this->error = $validation->validate_entry($this->question_number);
-
-				if ($this->error) break;
-				$this->question_number += count($section_data['responses']);
-			}
-		}
-		return $this->error;
-	}
-
-	function validate_type1($question_number, $responses) {
-		foreach ($responses as $response) {
-			if ($response == 0) {
-				return $question_number;
-			}
-			$question_number++;
-		}
-		return 0;
-	}
-
-	function validate_type2($question_number, $responses) {
-		return (($responses[0] == 0) ? $question_number : 0);
-	}
-
-	function validate_type3($question_number, $responses) {
-		$array_size = count($responses) - 1;
-		if (in_array(1, array_slice($responses, 0, $array_size)) && $responses[$array_size] == 1) {
-			return -$question_number;
-		}
-		if (!in_array(1, $responses)) {
-			return $question_number;
-		}
-		return 0;
-	}
-
-	function save_data() {
-		$this->timestamp = time();
-		$cur_line = '"' . date('Y-m-d', $this->timestamp) . '",' .
-								'"' . date('H:i:s', $this->timestamp) . '"';
-		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				foreach ($section_data['responses'] as $response) {
-					$cur_line .= ',' . $response;
-				}
-			}
-		}
-		$cur_line .= "\r\n";
-		$file_handle = fopen($this->survey_name . '.csv', 'a');
-		fwrite($file_handle, $cur_line);
-		fclose($file_handle);
-		touch($this->survey_name . '.csv', $this->timestamp);
-		$this->js_function = 'formDisable';
-	}
-
-	function summarize_responses() {
+	public function summarizeResponses() {
 		// summarize responses in $this->survey_data array
 		foreach ($this->survey_data as $section_name => $section_data) {
-			if ($section_name != 'meta') {
-				$summarize_function = 'summarize_type' . $this->survey_data[$section_name]['type'];
-				$this->survey_data[$section_name]['summary'] =
-					$this->$summarize_function($section_name, $section_data);
-			}
+			$summarize_function = 'summarizeType' . $this->survey_data[$section_name]['type'];
+			$this->survey_data[$section_name]['summary'] =
+				$this->$summarize_function($section_name, $section_data);
 		}
 	}
 
-	function summarize_type1($section_name, $section_data) {
+	private function summarizeType1($section_name, $section_data) {
 		$answer_count = count($section_data['answers']);
 		foreach ($section_data['questions'] as $kq => $q) {
 			$temp_array = array_count_values($section_data['responses'][$kq]);
@@ -368,7 +263,7 @@ class Survey {
 		return $section_data['summary'];
 	}
 
-	function summarize_type2($section_name, $section_data) {
+	private function summarizeType2($section_name, $section_data) {
 		$answer_count = count($section_data['answers']);
 		$temp_array = array_count_values($section_data['responses'][0]);
 		$section_data['summary'] = array_fill(0, $answer_count, array (0, 0));
@@ -382,7 +277,7 @@ class Survey {
 		return $section_data['summary'];
 	}
 
-	function summarize_type3($section_name, $section_data) {
+	private function summarizeType3($section_name, $section_data) {
 		$answer_count = count($section_data['answers']);
 		$temp_array = array_fill(0, count($section_data['responses']), 0);
 		foreach ($section_data['responses'] as $kr => $response) {
@@ -397,6 +292,30 @@ class Survey {
 				round($temp_value / $this->response_count * 100, 0);
 		}
 		return $section_data['summary'];
+	}
+
+	function theSummary() {
+		$html = '';
+		$view_file = Self::SURVEY_VIEWS . 'summaryheader';
+		$variables = array(
+			'response_count' => $this->response_count
+		);
+		$html .= new View($view_file, $variables);
+		$question_number = 1;
+		foreach ($this->survey_data as $section_name => $section_data) {
+			$view_file = Self::SURVEY_VIEWS . 'stype' . $this->survey_data[$section_name]['type'];
+			$variables = array(
+				'question_number' => $question_number,
+				'data' => $section_data,
+				'response_count' => $this->response_count,
+			);
+			$html .= new View($view_file, $variables);
+			$question_number += count($section_data['questions']);
+		}
+		$variables = array();
+		$view_file = Self::SURVEY_VIEWS . 'summaryfooter';
+    	$html .= new View($view_file, $variables);
+		return $html;
 	}
 
 }

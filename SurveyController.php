@@ -93,7 +93,7 @@ class SurveyController extends PluginController {
 		foreach ($e as $file) {
 			// verify it's a survey definition file 
 			$test = new Survey($file);
-			$error = $test->load_survey_file();
+			$error = $test->loadSurveyFile();
 			unset($test);
 			if ($error) continue; // not a survey definition file
 			// get first line of text, skipping blank lines
@@ -134,20 +134,15 @@ class SurveyController extends PluginController {
 		return 0;
 	}
 
-	public function view($survey_name = '') {
-		if ($survey_name == '') {
+	public function view($given_survey = '') {
+		if ($given_survey == '') {
 			exit(__('No survey name specified'));
 		}
-		$survey_name = SURVEY_DATA . implode(DS, func_get_args());
-		$survey = new Survey($survey_name);
-		$error = $survey->load_survey_file($survey_name);
-		if ($error) {exit($error);}
-		$error = $survey->load_survey_responses();
-		if ($error) {exit($error);}
-		$survey->summarize_responses();
-		$html = $survey->build_summary($survey_name);
+		$given_survey = SURVEY_DATA . implode(DS, func_get_args());
+		$survey = new Survey($given_survey);
+		$survey->prepareSummary();
 		$arg_array = array(
-			'html' => $html
+			'html' => $survey->theSummary()
 		);
 		$this->display('survey/views/view', $arg_array);
 	}

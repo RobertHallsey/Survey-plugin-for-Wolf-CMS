@@ -30,21 +30,26 @@ Plugin::setInfos(array(
 	'id'          => 'survey',
 	'title'       => __('Survey'),
 	'description' => __('Conduct surveys in WolfCMS.'),
-	'version'     => '0.1',
-	'license'     => 'GPL',
+	'version'     => '1.0',
+	'license'     => 'GPLv3',
 	'author'      => 'Robert Hallsey',
 	'website'     => 'http://www.clicketyhome.com/',
 	//'update_url'  => 'http://www.wolfcms.org/plugin-versions.xml',
 	'require_wolf_version' => '0.7.7'
 ));
 
-// Some path locations
-define('SURVEY_ICONS', URL_PUBLIC . 'wolf/plugins/survey/icons/');
-define('SURVEY_BROWSE', URL_PUBLIC . 'admin/plugin/survey/browse/');
-define('SURVEY_VIEW', BASE_URL . 'plugin/survey/view/');
+// Some path and URL locations
+define('SURVEY_BASE_PATH', PLUGINS_ROOT . DS . 'survey' . DS);
+
+/*
+define('SURVEY_SUMMARIZE', URL_PUBLIC . 'public/');
+define('SURVEY_VIEWS', PLUGINS_ROOT . DS . 'survey' . DS . 'views/');
+*/
 define('SURVEY_DATA', CMS_ROOT . DS . 'public' . DS);
-define('SURVEY_ROOT', PLUGINS_ROOT . DS . 'survey' . DS);
-define('SURVEY_VIEWS', SURVEY_ROOT . 'views/');
+define('SURVEY_BROWSE', URL_PUBLIC . 'admin/plugin/survey/browse/');
+define('SURVEY_RESPONSE_FILE_EXT', 'csv');
+define('SURVEY_VIEW', URL_PUBLIC . 'admin/plugin/survey/view/');
+define('SURVEY_ICONS', URL_PUBLIC . 'wolf/plugins/survey/icons/');
 
 // Add the plugin's tab and controller
 Plugin::addController('survey', __('Survey'));
@@ -52,45 +57,32 @@ Plugin::addController('survey', __('Survey'));
 // Add the models to the autoLoader
 AutoLoader::addFile('Survey', CORE_ROOT . '/plugins/survey/Survey.php');
 
-function survey_conduct($given_survey = '', $fancy = TRUE) {
+function survey_conduct($given_survey = '') {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-		if ($given_survey === '') {
-			exit(__('No survey name specified'));
+		if (file_exists('public/' . $given_survey)) {
+			$given_survey = 'public/' . $given_survey;
 		}
 		$survey = new Survey($given_survey);
-		$error = $survey->load_survey_file();
-		if ($error) exit($error);
-		$survey->prefill_survey_responses();
-		$save = $survey->get_variables();
-		$_SESSION['save'] = $save;
+		$survey->prepareSurvey();
+		$_SESSION['survey_running'] = TRUE;
 	}
-	else {
-		if (!isset($_SESSION['save'])) {
-			exit(__('Survey is finished'));
-		}
-		$survey = new Survey;
-		$save = $_SESSION['save'];
-		$survey->set_variables($save);
-		$survey->update_survey_data($_POST['survey_data']);
-		if ($survey->validate_errors() == 0) {
-			$survey->save_data();
-			unset($_SESSION['save']);
+	else { // must be POST
+		if (!isset($_SESSION['survey_running'])) exit ('No running survey');
+		$survey = new Survey($_POST['survey_file']);
+		if ($survey->processSurvey(
+			$_POST['survey_save'],
+			$_POST['survey_data']) == TRUE) {
+			unset($_SESSION['survey_running']);
 		}
 	}
-	$html = $survey->build_form($fancy);
-	echo $html;
+	echo $survey->theForm();
 }
 
-function survey_summarize($survey_name = '', $fancy = TRUE) {
-	if ($survey_name == '') {
-		exit(__('No survey name specified'));
+function survey_summarize($given_survey = '') {
+	if (file_exists('public/' . $given_survey)) {
+		$given_survey = 'public/' . $given_survey;
 	}
-	$survey = new Survey($survey_name);
-	$error = $survey->load_survey_file();
-	if ($error) exit($error);
-	$error = $survey->load_survey_responses();
-	if ($error) exit($error);
-	$survey->summarize_responses();
-	$html = $survey->build_summary($survey_name, $fancy);
-	echo $html;
+	$survey = new Survey($given_survey);
+	$survey->prepareSummary();
+	echo $survey->theSummary();
 }
