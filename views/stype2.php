@@ -1,8 +1,5 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -14,8 +11,8 @@ if (!defined('IN_CMS')) { exit(); }
  */
 ?>
 <?php if (isset($data['title'])): ?>
-<h3><?php echo $data['title'] ?></h3>
 
+<h3><?php echo $data['title'] ?></h3>
 <?php endif; ?>
 <table class="type2">
   <colgroup>

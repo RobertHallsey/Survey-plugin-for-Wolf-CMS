@@ -1,8 +1,5 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -15,10 +12,12 @@ if (!defined('IN_CMS')) { exit(); }
 ?>
 
 <div id="sf"><!-- sf survey form -->
-
 <?php if ($error_question): ?>
 <p><?php echo $error_msg ?></p>
 
 <?php endif; ?>
 <form id="form" method="post">
+<input type="hidden" name="survey_file" value="<?php echo $survey_file ?>">
+<input type="hidden" name="survey_save" value="<?php echo $survey_save ?>">
+
 

@@ -1,8 +1,5 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -21,11 +18,9 @@ if (!defined('IN_CMS')) { exit(); }
 
 </form>
 
-<?php if ($fancy == TRUE): ?>
 <p><?php echo __('Validation Timestamp: ') . date('M. d, Y h:i:s A', $timestamp) ?></p>
 <?php endif; ?>
-<?php endif; ?>
-<?php if ($execute): ?>
+<?php if ($js_code): ?>
 
 <script type="text/javascript">
 	function formDisable() {
@@ -38,7 +33,7 @@ if (!defined('IN_CMS')) { exit(); }
 	function formReset() {
 		this.form.reset()
 	}
-	<?php echo $execute ?>
+	<?php echo $js_code ?>
 
 </script>
 

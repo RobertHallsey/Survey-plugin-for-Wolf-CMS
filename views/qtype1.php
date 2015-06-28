@@ -1,8 +1,5 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -13,6 +10,12 @@ if (!defined('IN_CMS')) { exit(); }
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
 ?>
+
+
+<?php if ($heading): ?>
+
+<p><?php echo $heading ?></p>
+<?php endif; ?>			
 <table class="type1">
   <colgroup>
   	<col span="1">

@@ -1,8 +1,5 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -13,9 +10,4 @@ if (!defined('IN_CMS')) { exit(); }
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
 ?>
-<?php if ($fancy == TRUE) : ?>
-
-<p><?php echo __('End of Summary') ?></p>
-
-<?php endif; ?>
 </div><!-- ss:survey summary -->

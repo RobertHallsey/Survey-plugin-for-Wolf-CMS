@@ -1,8 +1,5 @@
 <?php
 
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -14,9 +11,6 @@ if (!defined('IN_CMS')) { exit(); }
  */
 ?>
 <?php
-
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
 
 /**
  * The Survey plugin makes it easy to conduct custom surveys.
