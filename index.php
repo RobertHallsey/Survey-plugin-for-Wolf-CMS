@@ -38,7 +38,7 @@ Plugin::setInfos(array(
 	'require_wolf_version' => '0.7.7'
 ));
 
-// Some path and URL locations
+// Survey plugin's home
 define('SURVEY_BASE_PATH', PLUGINS_ROOT . DS . 'survey' . DS);
 
 /*
