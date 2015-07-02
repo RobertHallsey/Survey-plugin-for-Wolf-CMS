@@ -26,24 +26,16 @@ if (!defined('IN_CMS')) exit();
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- /**
- * // Some path and URL locations (defined in index.php)
- * define('SURVEY_ICONS', URL_PUBLIC . 'wolf/plugins/survey/icons/');
- * define('SURVEY_BROWSE', URL_PUBLIC . 'admin/plugin/survey/browse/');
- * define('SURVEY_VIEW', URL_PUBLIC . 'admin/plugin/survey/view/');
- * define('SURVEY_SUMMARIZE', URL_PUBLIC . 'public/');
- * define('SURVEY_DATA', CMS_ROOT . DS . 'public' . DS);
- * define('SURVEY_VIEWS', PLUGINS_ROOT . DS . 'survey' . DS . 'views/');
- * define('SURVEY_RESPONSE_FILE_EXT', 'csv');
- * // URL_PUBLIC, CMS_ROOT, and PLUGINS_ROOT are Wolf CMS constants
- */
- 
 /**
  * class SurveyController
  */
 
- 
+
 class SurveyController extends PluginController {
+
+const DATA_HOME_PATH = CMS_ROOT . DS . 'public' . DS;
+const BROWSE_URL = URL_PUBLIC . 'admin/plugin/survey/browse/';
+const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 
 	function __construct() {
 		$this->setLayout('backend');
@@ -54,33 +46,26 @@ class SurveyController extends PluginController {
 		$this->display('survey/views/index');
 	}
 
-	function documentation() {
-		$this->display('survey/views/documentation');
-	}
-
     function browse() {
 		$segment = implode('/', func_get_args());
 		switch (func_num_args()) {
 		case 0:
-			$full_path = SURVEY_DATA;
-			$up_url = array(SURVEY_BROWSE, 'public');
+			$full_path = Self::DATA_HOME_PATH;
+			$up_url = Self::BROWSE_URL;
 			break;
 		case 1:
-			$full_path = SURVEY_DATA . str_replace('/', DS, $segment) . DS;
-			$up_url = array(SURVEY_BROWSE,$segment);
+			$full_path = Self::DATA_HOME_PATH . str_replace('/', DS, $segment) . DS;
+			$up_url = Self::BROWSE_URL;
 			break;
 		default:
-			$full_path = SURVEY_DATA . str_replace('/', DS, $segment) . DS;
-			$up_url = array(
-				SURVEY_BROWSE . substr($segment, 0, strripos($segment, '/', -1)),
-				substr($segment, strripos($segment, '/', -1) + 1)
-			);
+			$full_path = Self::DATA_HOME_PATH . str_replace('/', DS, $segment) . DS;
+			$up_url = Self::BROWSE_URL . substr($segment, 0, strripos($segment, '/', -1));
 			break;
 		}
 		$dirs = array();
 		foreach (glob($full_path . '*', GLOB_ONLYDIR) as $dir) {
 			$dirs[] = array(
-				SURVEY_BROWSE . str_replace(DS, '/', str_replace(SURVEY_DATA, '', $dir)),
+				Self::BROWSE_URL . str_replace(DS, '/', str_replace(Self::DATA_HOME_PATH, '', $dir)),
 				basename($dir)
 			);
 		}
@@ -104,7 +89,7 @@ class SurveyController extends PluginController {
 			} while ($line == '');
 			fclose($file_handle);
 			// get name following semi-colon, if there
-			$file = SURVEY_VIEW . str_replace(DS, '/', str_replace(SURVEY_DATA, '', $file));
+			$file = Self::VIEW_URL . str_replace(DS, '/', str_replace(Self::DATA_HOME_PATH, '', $file));
 			if (substr($line, 0, 1) == ';') {
 				do {
 					$line = substr($line, 1);
@@ -112,17 +97,18 @@ class SurveyController extends PluginController {
 				$files[] = array($file,	$line);
 			}
 			else {
-				$files[] = array($file,	'');
+				$files[] = array($file,	'Unamed Survey');
 			}
 		}
 		$arg_array = array(
+			'segment' => $segment,
 			'up_url' => $up_url,
 			'dirs' => $dirs,
 			'files' => $files
 		);
 		$this->display('survey/views/browse', $arg_array);
 	}
-	
+
 /**
 * Compares the filename part of two fully qualified file references
 */
@@ -138,7 +124,7 @@ class SurveyController extends PluginController {
 		if ($given_survey == '') {
 			exit(__('No survey name specified'));
 		}
-		$given_survey = SURVEY_DATA . implode(DS, func_get_args());
+		$given_survey = Self::DATA_HOME_PATH . implode(DS, func_get_args());
 		$survey = new Survey($given_survey);
 		$survey->prepareSummary();
 		$arg_array = array(

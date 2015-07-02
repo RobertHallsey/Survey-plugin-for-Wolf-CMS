@@ -41,14 +41,7 @@ Plugin::setInfos(array(
 // Survey plugin's home
 define('SURVEY_BASE_PATH', PLUGINS_ROOT . DS . 'survey' . DS);
 
-/*
-define('SURVEY_SUMMARIZE', URL_PUBLIC . 'public/');
-define('SURVEY_VIEWS', PLUGINS_ROOT . DS . 'survey' . DS . 'views/');
-*/
-define('SURVEY_DATA', CMS_ROOT . DS . 'public' . DS);
-define('SURVEY_BROWSE', URL_PUBLIC . 'admin/plugin/survey/browse/');
 define('SURVEY_RESPONSE_FILE_EXT', 'csv');
-define('SURVEY_VIEW', URL_PUBLIC . 'admin/plugin/survey/view/');
 define('SURVEY_ICONS', URL_PUBLIC . 'wolf/plugins/survey/icons/');
 
 // Add the plugin's tab and controller

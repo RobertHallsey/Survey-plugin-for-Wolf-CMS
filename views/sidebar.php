@@ -1,5 +1,8 @@
 <?php
 
+/* Security measure */
+if (!defined('IN_CMS')) { exit(); }
+
 /**
  * The Survey Plugin for Wolf CMS makes it easy to conduct custom surveys.
  *
@@ -11,6 +14,9 @@
  */
 ?>
 <?php
+
+/* Security measure */
+if (!defined('IN_CMS')) { exit(); }
 
 /**
  * The Survey plugin makes it easy to conduct custom surveys.
@@ -31,12 +37,5 @@
   <a href="<?php echo get_url('plugin/survey/browse/'); ?>">
     <img src="<?php echo PLUGINS_PATH . 'survey/icons/summaries.png' ?>" align="middle" alt="summaries">
     <?php echo __('Summaries'); ?>
-  </a>
-</p>
-
-<p class="button">
-  <a href="<?php echo get_url('plugin/survey/documentation/'); ?>">
-	<img src="<?php echo PLUGINS_PATH . 'survey/icons/documentation.png' ?>" align="middle" alt="documentation">
-    <?php echo __('Documentation'); ?>
   </a>
 </p>
