@@ -2,10 +2,7 @@
 This is the stylesheet for the Wolf CMS survey plugin.
 */
 
-/* #sf styles the survey form */
-
 #sf {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 85%;
 }
 
@@ -13,25 +10,32 @@ This is the stylesheet for the Wolf CMS survey plugin.
 	margin: 25px 0 10px 0;
 }
 
+#ss h3 {
+	margin: 0 0 25px 0;
+}
+
+#ss img {
+  vertical-align: -6px;
+}
+
+/* #sf styles the survey form */
+
 #sf table {
 	border-collapse: collapse;
 }
 
 #sf .type1 thead {
-  border-bottom: 1px solid;
+	border-bottom: 1px solid;
 }
 
-#sf th {
+#sf th,
+#sf td {
 	font-weight: normal;
 	text-align: center;
 }
 
 #sf th:first-child {
 	text-align: left;
-}
-
-#sf td {
-	text-align: center;
 }
 
 #sf th:nth-child(n+2),
@@ -61,7 +65,6 @@ This is the stylesheet for the Wolf CMS survey plugin.
 #ss table {
 	border-collapse: collapse;
 	border: 2px solid black;
-	table-layout: fixed;
 	margin-bottom: 30px;
 }
 
@@ -109,54 +112,10 @@ aligns to the left.
 	padding: 2px 5px 2px 5px;
 }
 
-/*
-The following two declarations create the thicker internal column borders.
-Columns are difficult to style in CSS. This technique doesn't actually
-style the borders but instead draws an empty box on top of the column
-borders.
-
-#ss table {
-  position: relative;
-}
-
-#ss .type1 thead > tr:first-of-type th:not(:first-of-type):after  {
-  content: '';
-  position: absolute;
-  display: block;
-  top: 0px;
-  border: 1px solid black;
-  margin-left: -0.5em;
-  height: calc(100% - 3px);
-}
-*/
-
-#ss .col {
-  border-left: 2px solid;
-}
-
+#ss .col,
 #ss .type2 td:not(:first-child) ,
 #ss .type2 th:not(:first-child) ,
 #ss .type3 td:not(:first-child) ,
 #ss .type3 th:not(:first-child) {
    border-left: 2px solid;
-}
-
-#ss h3 {
-	margin: 0 0 25px 0;
-}
-
-#ss img {
-  vertical-align: -6px;
-}
-
-#ss p {
-  margin: 0 0 20px 20px;
-}
-
-#ss div:nth-child(2) p {
-  margin: 20px 0 20px 0;
-}
-
-#ss div:nth-child(1) p:nth-child(2) {
-  margin: 20px 0 20px 0;
 }

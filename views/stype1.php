@@ -11,7 +11,7 @@
 ?>
 <?php $colspan = count($data['answers']) + 1 ?>
 <?php if (isset($data['title'])): ?>
-<h3><?php echo $data['title'] ?></h3>
+<p><?php echo $data['title'] ?></p>
 
 <?php endif; ?>
 <table class="type1">
