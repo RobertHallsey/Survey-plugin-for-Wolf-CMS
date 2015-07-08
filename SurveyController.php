@@ -33,11 +33,20 @@ if (!defined('IN_CMS')) exit();
 
 class SurveyController extends PluginController {
 
+/* Dammit! Can't do this until PHP 5.6...
 const DATA_HOME_PATH = CMS_ROOT . DS . 'public' . DS;
 const BROWSE_URL = URL_PUBLIC . 'admin/plugin/survey/browse/';
 const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
+*/
+
+	protected $DATA_HOME_PATH = '';
+	protected $BROWSE_URL = '';
+	protected $VIEW_URL = '';
 
 	function __construct() {
+		$this->DATA_HOME_PATH = CMS_ROOT . DS . 'public' . DS;
+		$this->BROWSE_URL = URL_PUBLIC . 'admin/plugin/survey/browse/';
+		$this->VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 		$this->setLayout('backend');
 		$this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
 	}
@@ -50,22 +59,22 @@ const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 		$segment = implode('/', func_get_args());
 		switch (func_num_args()) {
 		case 0:
-			$full_path = Self::DATA_HOME_PATH;
-			$up_url = Self::BROWSE_URL;
+			$full_path = $this->DATA_HOME_PATH;
+			$up_url = $this->BROWSE_URL;
 			break;
 		case 1:
-			$full_path = Self::DATA_HOME_PATH . str_replace('/', DS, $segment) . DS;
-			$up_url = Self::BROWSE_URL;
+			$full_path = $this->DATA_HOME_PATH . str_replace('/', DS, $segment) . DS;
+			$up_url = $this->BROWSE_URL;
 			break;
 		default:
-			$full_path = Self::DATA_HOME_PATH . str_replace('/', DS, $segment) . DS;
-			$up_url = Self::BROWSE_URL . substr($segment, 0, strripos($segment, '/', -1));
+			$full_path = $this->DATA_HOME_PATH . str_replace('/', DS, $segment) . DS;
+			$up_url = $this->BROWSE_URL . substr($segment, 0, strripos($segment, '/', -1));
 			break;
 		}
 		$dirs = array();
 		foreach (glob($full_path . '*', GLOB_ONLYDIR) as $dir) {
 			$dirs[] = array(
-				Self::BROWSE_URL . str_replace(DS, '/', str_replace(Self::DATA_HOME_PATH, '', $dir)),
+				$this->BROWSE_URL . str_replace(DS, '/', str_replace($this->DATA_HOME_PATH, '', $dir)),
 				basename($dir)
 			);
 		}
@@ -89,7 +98,7 @@ const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 			} while ($line == '');
 			fclose($file_handle);
 			// get name following semi-colon, if there
-			$file = Self::VIEW_URL . str_replace(DS, '/', str_replace(Self::DATA_HOME_PATH, '', $file));
+			$file = $this->VIEW_URL . str_replace(DS, '/', str_replace($this->DATA_HOME_PATH, '', $file));
 			if (substr($line, 0, 1) == ';') {
 				do {
 					$line = substr($line, 1);
@@ -124,7 +133,7 @@ const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 		if ($given_survey == '') {
 			exit(__('No survey name specified'));
 		}
-		$given_survey = Self::DATA_HOME_PATH . implode(DS, func_get_args());
+		$given_survey = $this->DATA_HOME_PATH . implode(DS, func_get_args());
 		$survey = new Survey($given_survey);
 		$survey->prepareSummary();
 		$arg_array = array(
