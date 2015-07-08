@@ -1,7 +1,4 @@
-[meta]
-name = "Sample Survey"
-hello = "Please complete this survey"
-goodbye = "Thank you for taking this survey!"
+; Sample Survey
 
 [section_1]
 type = 1

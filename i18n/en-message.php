@@ -14,7 +14,7 @@ return array(
 	'Survey file not found' => 'Survey file not found',
 	'Cannot parse survey file' => 'Cannot parse survey file',
 	'Survey file missing meta section' => 'Survey file missing meta section',
-	'Section \'%name%\' has missing Type property' => 'Section \'%name%\' has missing Type property',
+	'Section \'%name%\' has no Type property' => 'Section \'%name%\' has no Type property',
 	'Section \'%name%\' has missing or malformed questions' => 'Section \'%name%\' has missing or malformed questions',
 	'Section \'%name%\' has missing or malformed answers' => 'Section \'%name%\' has missing or malformed answers',
 	'Please answer question #%question_number%' => 'Please answer question #%question_number%',

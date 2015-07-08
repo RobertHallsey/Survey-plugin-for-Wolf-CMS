@@ -2,7 +2,6 @@
 /**
  * Survey Plugin for Wolf CMS language file
  * This file is part of the Survey Plugin for Wolf CMS.
- * Translation by Robert Hallsey <rhallsey@yahoo.com>
  */
 
 return array(
@@ -14,8 +13,7 @@ return array(
 	'Survey is finished' => 'La encuesta ha terminado',
 	'Survey file not found' => 'El archivo de la encuesta no se encuentra',
 	'Cannot parse survey file' => 'El archivo de la encuesta no se puede analizar',
-	'Survey file missing meta section' => 'Al archive de la encuesta le falta la sección meta',
-	'Section \'%name%\' has missing Type property' => 'A la sección \'%name%\' le falta la propiedad Type',
+	'Section \'%name%\' has no Type property' => 'La sección \'%name%\' no tiene la propiedad Type',
 	'Section \'%name%\' has missing or malformed questions' => 'La sección \'%name%\' tiene preguntas faltantes ó malhechas',
 	'Section \'%name%\' has missing or malformed answers' => 'La sección \'%name%\' tiene respuestas faltantes ó malhechas',
 	'Please answer question #%question_number%' => 'Favor de contestar la pregunta #%question_number%',

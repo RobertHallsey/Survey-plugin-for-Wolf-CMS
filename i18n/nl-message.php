@@ -14,7 +14,7 @@ return array(
 	'Survey file not there' => 'Enquête bestand is niet gevonden',
 	'Cannot parse survey file' => 'Kan het enquête bestand niet uitlezen',
 	'Survey file missing meta section' => 'Enquête bestand mist de meta sectie',
-	'Section \'%name%\' has missing Type property' => 'Sectie \'%name%\' mist een Type eigenschap',
+	'Section \'%name%\' has no Type property' => 'Sectie \'%name%\' mist een Type eigenschap',
 	'Section \'%name%\' has missing or malformed questions' => 'Sectie \'%name%\' bevat missende of misvormde vragen',
 	'Section \'%name%\' has missing or malformed answers' => 'Sectie \'%name%\' bevat missende of misvormde antwoorden',
 	'Please answer question #%question_number%' => 'Beantwoord vraag #%question_number%',
