@@ -20,7 +20,7 @@ return array(
 	'Question #%question_number%\'s last option is either/or' => 'La última opción de la pregunta #%question_number% es exclusiva de las otras opciones',
 	'Reset' => 'Reiniciar',
 	'Submit' => 'Enviar',
-	'Validation Timestamp: ' => 'Validación por marca horaria: ',
+	'Timestamp: ' => 'Tiempo: ',
 	'Survey Summary' => 'Resumen de Encuesta',
 	'Survey Name:' => 'Nombre de la Encuesta:',
 	'Total Responses:' => 'Total de Respuestas:',

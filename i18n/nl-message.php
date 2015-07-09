@@ -21,7 +21,7 @@ return array(
 	'Question #%question_number%\'s last option is either/or' => 'Vraag #%question_number%\'s laatste optie is beiden/of',
 	'Reset' => 'Reset',
 	'Submit' => 'Voorlegen',
-	'Validation Timestamp: ' => 'Validatie tijdstempel: ',
+	'Timestamp: ' => 'Tijdstempel: ',
 	'Survey Summary' => 'Enquête samenvatting',
 	'Survey Name:' => 'Naam enquête:',
 	'Total Responses:' => 'Totaal uitkomsten:',

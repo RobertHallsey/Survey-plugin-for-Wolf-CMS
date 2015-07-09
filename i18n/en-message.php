@@ -21,7 +21,7 @@ return array(
 	'Question #%question_number%\'s last option is either/or' => 'Question #%question_number%\'s last option is either/or',
 	'Reset' => 'Reset',
 	'Submit' => 'Submit',
-	'Validation Timestamp: ' => 'Validation Timestamp: ',
+	'Timestamp: ' => 'Timestamp: ',
 	'Survey Summary' => 'Survey Summary',
 	'Survey Name:' => 'Survey Name:',
 	'Total Responses:' => 'Total Responses:',
