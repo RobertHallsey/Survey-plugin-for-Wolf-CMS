@@ -17,14 +17,11 @@ if (!defined('IN_CMS')) { exit(); }
 
 <p>The Survey Plugin lets you conduct custom surveys within your Wolf CMS pages. You must first create a Survey Description File and place it in the public/ directory. Suppose you call that file "my_survey." To conduct the survey within a Wolf CMS page, you would place the following code in the page.</p>
 
-<code>
-&lt;?php
-	if (Plugin::isEnabled('survey_conduct')) survey_conduct('my_survey');
-?&gt;
-</code>
+<code>&lt;?php survey_conduct('my_survey');?&gt;</code>
 
 <p>Survey responses are collected in the file "my_survey.csv," also found in the public/ directory.</p>
-<p>Please see the online documentation page for more information.</p>
+
+<p>Please see the documentation for more information.</p>
 
 <hr>
 
