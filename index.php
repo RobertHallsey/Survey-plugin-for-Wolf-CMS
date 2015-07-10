@@ -50,32 +50,29 @@ Plugin::addController('survey', __('Survey'));
 // Add the models to the autoLoader
 AutoLoader::addFile('Survey', CORE_ROOT . '/plugins/survey/Survey.php');
 
-function survey_conduct($given_survey = '') {
+function survey_conduct($given_survey) {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-		if (file_exists('public/' . $given_survey)) {
-			$given_survey = 'public/' . $given_survey;
-		}
-		$survey = new Survey($given_survey);
+		$survey = new Survey(public_file($given_survey));
 		$survey->prepareSurvey();
-		$_SESSION['survey_running'] = TRUE;
+		Flash::set('survey_running', true);
 	}
 	else { // must be POST
-		if (!isset($_SESSION['survey_running'])) exit ('No running survey');
+		if (!Flash::get('survey_running')) exit ('No running survey');
 		$survey = new Survey($_POST['survey_file']);
-		if ($survey->processSurvey(
-			$_POST['survey_save'],
-			$_POST['survey_data']) == TRUE) {
-			unset($_SESSION['survey_running']);
-		}
+		$survey->processSurvey($_POST['survey_save'], $_POST['survey_data']);
 	}
 	echo $survey->theForm();
 }
 
-function survey_summarize($given_survey = '') {
-	if (file_exists('public/' . $given_survey)) {
-		$given_survey = 'public/' . $given_survey;
-	}
-	$survey = new Survey($given_survey);
+function survey_summarize($given_survey) {
+	$survey = new Survey(public_file($given_survey));
 	$survey->prepareSummary();
 	echo $survey->theSummary();
+}
+
+function public_file ($file){
+	if (file_exists('public/' . $file)) {
+		$file = 'public/' . $file;
+	}
+	return $file;
 }
