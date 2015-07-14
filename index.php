@@ -59,7 +59,9 @@ function survey_conduct($given_survey) {
 	else { // must be POST
 		if (!Flash::get('survey_running')) exit ('No running survey');
 		$survey = new Survey($_POST['survey_file']);
-		$survey->processSurvey($_POST['survey_save'], $_POST['survey_data']);
+		if (!$survey->processSurvey($_POST['survey_save'], $_POST['survey_data'])) {
+			Flash::set('survey_running', true);
+		}
 	}
 	echo $survey->theForm();
 }
