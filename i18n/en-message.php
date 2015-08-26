@@ -5,7 +5,6 @@
  */
 
 return array(
-	'Home' => 'Home',
 	'Survey' => 'Survey',
 	'Conduct surveys in WolfCMS.' => 'Conduct surveys in WolfCMS.',
 	'Documentation' => 'Documentation',

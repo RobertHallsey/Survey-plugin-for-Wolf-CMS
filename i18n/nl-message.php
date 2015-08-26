@@ -5,7 +5,6 @@
  */
 
 return array(
-	'Home' => 'Homepage',
 	'Survey' => 'Enquête',
 	'Conduct surveys in WolfCMS.' => 'Enquêtes opstellen in WolfCMS.',
 	'Documentation' => 'Documentatie',

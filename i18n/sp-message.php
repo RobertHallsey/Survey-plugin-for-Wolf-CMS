@@ -5,7 +5,6 @@
  */
 
 return array(
-	'Home' => 'Página de Origen',
 	'Survey' => 'Encuesta',
 	'Conduct surveys in WolfCMS.' => 'Conducir encuestas en WolfCMS.',
 	'Documentation' => 'Documentación',

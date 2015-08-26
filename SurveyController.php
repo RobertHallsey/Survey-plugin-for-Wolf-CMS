@@ -52,10 +52,6 @@ const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 	}
 
 	function index() {
-		$this->display('survey/views/index');
-	}
-
-    function browse() {
 		$segment = implode('/', func_get_args());
 		switch (func_num_args()) {
 		case 0:
@@ -140,6 +136,10 @@ const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 			'html' => $survey->theSummary()
 		);
 		$this->display('survey/views/view', $arg_array);
+	}
+
+    function docs() {
+		$this->display('survey/views/index');
 	}
 
 }

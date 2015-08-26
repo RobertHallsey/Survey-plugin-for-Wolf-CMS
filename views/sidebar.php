@@ -26,16 +26,17 @@ if (!defined('IN_CMS')) { exit(); }
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
 ?>
+
 <p class="button">
   <a href="<?php echo get_url('plugin/survey/index/'); ?>">
-	<img src="<?php echo PLUGINS_PATH . 'survey/icons/home.png' ?>" align="middle" alt="home">
-    <?php echo __('Home'); ?>
+    <img src="<?php echo PLUGINS_PATH . 'survey/icons/summaries.png' ?>" align="middle" alt="summaries">
+    <?php echo __('Summaries'); ?>
   </a>
 </p>
 
 <p class="button">
-  <a href="<?php echo get_url('plugin/survey/browse/'); ?>">
-    <img src="<?php echo PLUGINS_PATH . 'survey/icons/summaries.png' ?>" align="middle" alt="summaries">
-    <?php echo __('Summaries'); ?>
+  <a href="<?php echo get_url('plugin/survey/docs/'); ?>">
+	<img src="<?php echo PLUGINS_PATH . 'survey/icons/docs.png' ?>" align="middle" alt="docs">
+    <?php echo __('Documentation'); ?>
   </a>
 </p>
