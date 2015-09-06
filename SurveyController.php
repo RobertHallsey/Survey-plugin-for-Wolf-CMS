@@ -33,7 +33,7 @@ if (!defined('IN_CMS')) exit();
 
 class SurveyController extends PluginController {
 
-/* Dammit! Can't do this until PHP 5.6...
+/* Darnit! Can't do this until PHP 5.6...
 const DATA_HOME_PATH = CMS_ROOT . DS . 'public' . DS;
 const BROWSE_URL = URL_PUBLIC . 'admin/plugin/survey/browse/';
 const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
@@ -50,8 +50,12 @@ const VIEW_URL = URL_PUBLIC . 'admin/plugin/survey/view/';
 		$this->setLayout('backend');
 		$this->assignToLayout('sidebar', new View('../../plugins/survey/views/sidebar'));
 	}
-
+	
 	function index() {
+		$this->browse();
+	}
+
+	function browse() {
 		$segment = implode('/', func_get_args());
 		switch (func_num_args()) {
 		case 0:
